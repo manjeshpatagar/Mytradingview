@@ -1,0 +1,83 @@
+.results-container {
+  padding: 20px;
+  background: white;
+  font-family: sans-serif;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.form-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.form-container input,
+.form-container select {
+  padding: 8px;
+  font-size: 14px;
+}
+
+.form-container button {
+  padding: 8px 12px;
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.results-table th,
+.results-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.stock-name {
+  font-weight: bold;
+  color: #1e40af;
+  font-size: 18px;
+}
+
+.buy-price {
+  color: green;
+}
+
+.sell-price {
+  color: red;
+}
+
+.high-day {
+  color: green;
+}
+
+.gain {
+  color: green;
+}
+
+.green-note {
+  font-weight: bold;
+  color: green;
+}
+
+.red-note {
+  font-weight: bold;
+  color: red;
+}
+
+.results-table button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}

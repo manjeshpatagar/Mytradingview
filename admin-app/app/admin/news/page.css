@@ -1,0 +1,93 @@
+.admin-news-container {
+  margin: auto;
+  padding: 20px;
+}
+
+.news-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.news-form input,
+.news-form textarea {
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+}
+
+.news-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.news-form textarea {
+  resize: vertical;
+  height: 100px;
+}
+
+.news-form button {
+  padding: 10px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.admin-news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-news-card {
+  display: flex;
+  gap: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  background: #f9f9f9;
+}
+
+.admin-news-img {
+  width: 160px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.admin-news-details {
+  flex: 1;
+}
+
+.admin-news-meta {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+.admin-news-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.admin-news-actions button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.admin-news-actions button:first-child {
+  background-color: #ffc107;
+}
+
+.admin-news-actions button:last-child {
+  background-color: #dc3545;
+  color: white;
+}

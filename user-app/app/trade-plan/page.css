@@ -1,0 +1,44 @@
+.trade-plan-page {
+  min-height: 100vh;
+  padding: 5px 10px;
+  background-color: #f1f5f9;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 24px;
+  text-align: center;
+  color: #1f2937;
+}
+
+.section-title {
+  font-size: 22px;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  color: #111827;
+  border-bottom: 2px solid #3b82f6;
+  padding-bottom: 4px;
+}
+
+.plan-description {
+  font-size: 16px;
+  margin-bottom: 12px;
+  line-height: 1.6;
+  color: #374151;
+  background-color: #ffffff;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.disclaimer-section {
+  margin-top: 30px;
+  font-size: 14px;
+  color: #ef4444;
+  background-color: #fff7f7;
+  padding: 16px;
+  border-left: 4px solid #f87171;
+  border-radius: 8px;
+}

@@ -1,0 +1,46 @@
+.stock-news-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.stock-news-form input,
+.stock-news-form textarea {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.stock-news-form textarea {
+  min-height: 60px;
+}
+.stock-news-form button {
+  padding: 10px 20px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.stock-news-form button:hover {
+  background-color: #0056c1;
+}
+.admin-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.admin-actions button {
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.stock-news-card{
+      border: 1px solid #00000021;
+    padding: 10px;
+    background: #e5e5e5ba;
+    margin-bottom: 20px;
+}
+
