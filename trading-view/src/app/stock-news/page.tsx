@@ -16,6 +16,17 @@ export default function StockNews() {
       impact: 'High',
       url: '#'
     },
+       {
+      id: 1,
+      title: 'Reliance Industries Q3 Results Beat Estimates',
+      company: 'RELIANCE',
+      summary: 'Reliance Industries reported better-than-expected Q3 results with strong performance in retail and digital services.',
+      sentiment: 'Positive',
+      time: '2 hours ago',
+      source: 'Economic Times',
+      impact: 'High',
+      url: '#'
+    },
     {
       id: 2,
       title: 'TCS Announces New AI Partnership',

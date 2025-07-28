@@ -130,7 +130,7 @@ export default function Results() {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Results & Events</h1>
-              <p className="text-gray-600">Upcoming earnings, dividends, and corporate events</p>
+              <p className="text-gray-600">Toady earnings, dividends, and corporate events</p>
             </div>
           </div>
         </div>
@@ -167,7 +167,7 @@ export default function Results() {
         {/* Events Table */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Upcoming Events</h2>
+            <h2 className="text-xl font-semibold text-gray-900">Today Events</h2>
             <p className="text-gray-600">Corporate events and announcements</p>
           </div>
           
