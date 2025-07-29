@@ -67,7 +67,17 @@ export default function IntradayResults() {
       entry: 2450,
       exit: 2520,
       return: 2.86,
-      status: 'Success'
+      status: 'Success',
+      profit: 'Buy Side'
+    },
+     {
+      symbol: 'RELIANCE',
+      company: 'Reliance Industries',
+      entry: 200,
+      exit: 197,
+      return: 2.86,
+      status: 'Success',
+      profit: 'Sell Side'
     },
     {
       symbol: 'TCS',
@@ -75,24 +85,19 @@ export default function IntradayResults() {
       entry: 3850,
       exit: 3950,
       return: 2.6,
-      status: 'Success'
+      status: 'Success',
+      profit: 'Buy Side'
     },
     {
       symbol: 'HDFC',
       company: 'HDFC Bank',
       entry: 1720,
-      exit: 1780,
+      exit: 1620,
       return: 3.49,
-      status: 'Success'
+      status: 'Success',
+      profit: 'Sell Side'
     },
-    {
-      symbol: 'INFY',
-      company: 'Infosys Limited',
-      entry: 1680,
-      exit: 1650,
-      return: -1.79,
-      status: 'Failed'
-    }
+   
   ];
 
   const stats = [
@@ -100,6 +105,7 @@ export default function IntradayResults() {
     { title: 'Success Rate', value: '85.7%', change: '+2.3%', icon: TrendingUp },
     { title: 'Avg Return', value: '3.2%', change: '+0.5%', icon: DollarSign },
     { title: 'Total Return', value: '₹115.6', change: '+18.2%', icon: BarChart3 }
+
   ];
 
   const formatDate = (dateString: string) => {
@@ -129,39 +135,13 @@ export default function IntradayResults() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <motion.div
-                key={stat.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white rounded-xl p-6 shadow-sm border border-gray-200"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                    <p className="text-sm text-green-600 font-medium">{stat.change} from last week</p>
-                  </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-
+        
         {/* Top Performers */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-xl font-semibold text-gray-900">Top Performers</h2>
-              <p className="text-gray-600">Best performing picks from recent trades</p>
+              <p className="text-gray-600">Best performing picks from today's trades</p>
             </div>
           </div>
 
@@ -174,12 +154,12 @@ export default function IntradayResults() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Exit</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Return</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profit</th>
+
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {topPerformers
-                  .filter(stock => stock.status === 'Success')
-                  .map((stock, index) => (
+                {topPerformers.map((stock, index) => (
                   <motion.tr
                     key={stock.symbol}
                     initial={{ opacity: 0, x: -20 }}
@@ -212,6 +192,14 @@ export default function IntradayResults() {
                         {stock.status}
                       </span>
                     </td>
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      <span className={`text-sm font-semibold ${stock.profit === 'Buy Side' ? 'text-green-600' : 'text-red-600'}`}>
+                        {stock.profit}
+                      </span>
+                    </td>
+                   
+
+
                   </motion.tr>
                 ))}
               </tbody>

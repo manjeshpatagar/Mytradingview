@@ -35,6 +35,36 @@ export default function IntradayPicks() {
       sellBelow: 2830,
       sellTarget: 2785,
     },
+       {
+      id: 2,
+      date: formatDate(today),
+      symbol: 'RELIANCE',
+      price: 2850,
+      buyAbove: 2875,
+      buyTarget: 2920,
+      sellBelow: 2830,
+      sellTarget: 2785,
+    },
+       {
+      id: 2,
+      date: formatDate(today),
+      symbol: 'RELIANCE',
+      price: 2850,
+      buyAbove: 2875,
+      buyTarget: 2920,
+      sellBelow: 2830,
+      sellTarget: 2785,
+    },
+       {
+      id: 2,
+      date: formatDate(today),
+      symbol: 'RELIANCE',
+      price: 2850,
+      buyAbove: 2875,
+      buyTarget: 2920,
+      sellBelow: 2830,
+      sellTarget: 2785,
+    },
     {
       id: 3,
       date: formatDate(new Date(today.getTime() - 1 * 86400000)),
@@ -59,32 +89,32 @@ export default function IntradayPicks() {
 
   const filteredPicks = allPicks.filter(p => p.date === selectedDate);
 
-  const stats = [
-    {
-      label: 'Total Picks',
-      value: allPicks.length.toString(),
-      icon: Target,
-      color: 'text-blue-600',
-    },
-    {
-      label: 'Success Rate',
-      value: '87%',
-      icon: TrendingUp,
-      color: 'text-green-600',
-    },
-    {
-      label: 'Avg Return',
-      value: '+4.2%',
-      icon: DollarSign,
-      color: 'text-purple-600',
-    },
-    {
-      label: 'Active Signals',
-      value: filteredPicks.length.toString(),
-      icon: Clock,
-      color: 'text-orange-600',
-    },
-  ];
+
+  //   {
+  //     label: 'Total Picks',
+  //     value: allPicks.length.toString(),
+  //     icon: Target,
+  //     color: 'text-blue-600',
+  //   },
+  //   {
+  //     label: 'Success Rate',
+  //     value: '87%',
+  //     icon: TrendingUp,
+  //     color: 'text-green-600',
+  //   },
+  //   {
+  //     label: 'Avg Return',
+  //     value: '+4.2%',
+  //     icon: DollarSign,
+  //     color: 'text-purple-600',
+  //   },
+  //   {
+  //     label: 'Active Signals',
+  //     value: filteredPicks.length.toString(),
+  //     icon: Clock,
+  //     color: 'text-orange-600',
+  //   },
+  // ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -104,29 +134,7 @@ export default function IntradayPicks() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">{stat.label}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                </div>
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${stat.color.replace('text-', 'bg-').replace('-600', '-100')}`}>
-                  <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
+    
         {/* Date Selector */}
         <div className="flex flex-wrap gap-2 mb-6">
           {last7Days.map(date => (
@@ -157,9 +165,9 @@ export default function IntradayPicks() {
                   <th className="px-6 py-4 text-left text-lg font-medium text-gray-700 uppercase">Stock</th>
                   <th className="px-6 py-4 text-left text-lg font-medium text-blue-600 uppercase">Price</th>
                   <th className="px-6 py-4 text-left text-lg font-medium text-green-700 uppercase">Buy Above</th>
-                  <th className="px-6 py-4 text-left text-lg font-medium text-green-700 uppercase">Buy Target</th>
+                  <th className="px-6 py-4 text-left text-lg font-medium text-green-700 uppercase">Target</th>
                   <th className="px-6 py-4 text-left text-lg font-medium text-red-700 uppercase">Sell Below</th>
-                  <th className="px-6 py-4 text-left text-lg font-medium text-red-700 uppercase">Sell Target</th>
+                  <th className="px-6 py-4 text-left text-lg font-medium text-red-700 uppercase">Target</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">

@@ -62,26 +62,45 @@ export default function Home() {
     { label: "Countries", value: "150+" }
   ];
 
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "Professional Trader",
-      content: "This platform transformed my trading. The signals are incredibly accurate and the community support is amazing.",
-      rating: 5
-    },
-    {
-      name: "Michael Chen",
-      role: "Day Trader",
-      content: "The real-time analytics and risk management tools have helped me increase my profits by 300%.",
-      rating: 5
-    },
-    {
-      name: "Emily Rodriguez",
-      role: "Investment Manager",
-      content: "Best trading platform I've ever used. The AI insights are game-changing for my portfolio strategy.",
-      rating: 5
-    }
-  ];
+ const testimonials = [
+  {
+    name: "Ravi Mehta",
+    role: "Intraday Trader, Mumbai",
+    content: "buy/sell levels are pure gold! I used to struggle to enter at the right time, but now my accuracy has improved drastically. Highly recommended for serious traders.",
+    rating: 5
+  },
+  {
+    name: "Neha Sharma",
+    role: "Swing Trader, Delhi",
+    content: "The intraday signals and news-based stock alerts helped me catch moves I would have otherwise missed. Very practical and well-explained strategy. Great work!",
+    rating: 5
+  },
+  {
+    name: "Amit Raj",
+    role: "College Student, Patna",
+    content: "As a beginner, I found the daily levels easy to follow. I made my first profitable trade using the buy-above and sell-below levels shared in the morning updates.",
+    rating: 5
+  },
+  {
+    name: "Priya Nair",
+    role: "Part-time Trader, Bangalore",
+    content: "The news-based trades are on point! I caught a 4% move on a result-based stock exactly as mentioned in the Trade Plan. No fluff—just actionable data.",
+    rating: 5
+  },
+  {
+    name: "Siddharth Rao",
+    role: "Full-time Trader, Hyderabad",
+    content: "Been following for 2 months now. The success ratio on intraday picks is solid, and the reasoning behind each trade boosts my confidence before entering.",
+    rating: 5
+  },
+   {
+    name: "Sarah Johnson",
+    role: "Professional Trader",
+    content: "This platform transformed my trading. The signals are incredibly accurate and the community support is amazing.",
+    rating: 5
+  }
+];
+
 
   const navigationItems = [
     { name: 'Intraday Picks', href: '/intraday-picks', icon: Target },
@@ -93,7 +112,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-bule-900 to-slate-900">
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 glass-effect border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -125,13 +144,14 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="mb-12"
           >
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight">
-              Master the Markets with
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> AI-Powered Trading</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
-              Join thousands of successful traders using our advanced analytics, real-time signals, and proven strategies to maximize your profits.
-            </p>
+           <h1 className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight">
+  Trade Smarter with India’s Most Precise
+  <span className="bg-gradient-to-r from-yellow-400 to-red-400 bg-clip-text text-transparent"> Stock Screener</span>
+</h1>
+<p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+  Discover high-potential stocks using daily levels, result-based picks, and real market news—trusted by thousands of active traders.
+</p>
+
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link href="/intraday-picks" className="btn-primary text-lg px-8 py-4">

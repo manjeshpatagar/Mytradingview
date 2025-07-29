@@ -137,32 +137,7 @@ export default function Results() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <motion.div
-                key={stat.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white rounded-xl p-6 shadow-sm border border-gray-200"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                    <p className="text-sm text-green-600 font-medium">{stat.change} from last week</p>
-                  </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
+      
 
         {/* Events Table */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
