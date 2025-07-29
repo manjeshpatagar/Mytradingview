@@ -1,7 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Activity, TrendingUp, TrendingDown, BarChart3, Calendar, DollarSign } from 'lucide-react';
+import {
+  Activity,
+  TrendingUp,
+  TrendingDown,
+  BarChart3,
+  Calendar,
+  DollarSign,
+  Info
+} from 'lucide-react';
 
 export default function IntradayResults() {
   const performanceData = [
@@ -66,7 +74,7 @@ export default function IntradayResults() {
       company: 'Tata Consultancy Services',
       entry: 3850,
       exit: 3950,
-      return: 2.60,
+      return: 2.6,
       status: 'Success'
     },
     {
@@ -96,10 +104,10 @@ export default function IntradayResults() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric'
     });
   };
 
@@ -148,8 +156,7 @@ export default function IntradayResults() {
           })}
         </div>
 
-
-{/* Top Performers */}
+        {/* Top Performers */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -157,7 +164,7 @@ export default function IntradayResults() {
               <p className="text-gray-600">Best performing picks from recent trades</p>
             </div>
           </div>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
@@ -170,7 +177,9 @@ export default function IntradayResults() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {topPerformers.map((stock, index) => (
+                {topPerformers
+                  .filter(stock => stock.status === 'Success')
+                  .map((stock, index) => (
                   <motion.tr
                     key={stock.symbol}
                     initial={{ opacity: 0, x: -20 }}
@@ -184,24 +193,16 @@ export default function IntradayResults() {
                         <div className="text-sm text-gray-500">{stock.company}</div>
                       </div>
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ₹{stock.entry}
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ₹{stock.exit}
-                    </td>
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">₹{stock.entry}</td>
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">₹{stock.exit}</td>
                     <td className="px-4 py-4 whitespace-nowrap">
-                      <span className={`text-sm font-semibold ${
-                        stock.return >= 0 ? 'text-green-600' : 'text-red-600'
-                      }`}>
+                      <span className={`text-sm font-semibold ${stock.return >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                         {stock.return >= 0 ? '+' : ''}{stock.return}%
                       </span>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        stock.status === 'Success' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
+                        stock.status === 'Success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                       }`}>
                         {stock.status === 'Success' ? (
                           <TrendingUp className="w-3 h-3 mr-1" />
@@ -217,7 +218,8 @@ export default function IntradayResults() {
             </table>
           </div>
         </div>
-        {/* Performance Chart */}
+
+        {/* Performance Table */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -229,7 +231,7 @@ export default function IntradayResults() {
               <span className="text-sm text-gray-500">Last 5 Days</span>
             </div>
           </div>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
@@ -250,29 +252,21 @@ export default function IntradayResults() {
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     className="hover:bg-gray-50 transition-colors"
                   >
-                    <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {formatDate(day.date)}
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {day.totalPicks}
-                    </td>
+                    <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{formatDate(day.date)}</td>
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{day.totalPicks}</td>
                     <td className="px-4 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                          <div 
-                            className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full" 
+                          <div
+                            className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full"
                             style={{ width: `${day.successRate}%` }}
                           ></div>
                         </div>
                         <span className="text-sm text-gray-900">{day.successRate}%</span>
                       </div>
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {day.avgReturn}%
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm font-semibold text-green-600">
-                      ₹{day.totalReturn}
-                    </td>
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{day.avgReturn}%</td>
+                    <td className="px-4 py-4 whitespace-nowrap text-sm font-semibold text-green-600">₹{day.totalReturn}</td>
                   </motion.tr>
                 ))}
               </tbody>
@@ -280,26 +274,24 @@ export default function IntradayResults() {
           </div>
         </div>
 
-        
-
-        {/* Disclaimer */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        {/* Custom Disclaimer */}
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-md shadow-sm mt-6">
           <div className="flex">
-            <div className="flex-shrink-0">
-              <BarChart3 className="h-5 w-5 text-blue-400" />
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-blue-800">Performance Disclaimer</h3>
-              <div className="mt-2 text-sm text-blue-700">
-                <p>
-                  Past performance does not guarantee future results. Trading involves risk and you may lose money. 
-                  These results are for educational purposes only and should not be considered as investment advice.
-                </p>
-              </div>
+            <Info className="w-5 h-5 mr-2 mt-1 text-yellow-500" />
+            <div className="text-sm">
+              <p className="font-semibold">Disclaimer:</p>
+              <p>
+                The "Buy Above" or "Sell Below" levels shared are for educational purposes only. Once the price crosses the level, you may consider entering — but we do not guarantee target achievement.
+                <br />
+                It is recommended to book <strong>2–3% profit</strong> and exit if the stock shows resistance or lacks momentum.
+                The same logic applies to <strong>Sell</strong> setups.
+                <br />
+                We are <strong>not SEBI-registered advisors</strong>. Please trade responsibly and always use a stop-loss.
+              </p>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-} 
+}

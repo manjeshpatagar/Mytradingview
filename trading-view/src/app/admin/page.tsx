@@ -15,7 +15,10 @@ import {
   Eye,
   Edit,
   Trash2,
-  LogOut
+  LogOut,
+  DollarSign,
+  Globe,
+  Target
 } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -40,6 +43,8 @@ export default function AdminDashboard() {
     { id: 'news', label: 'News Management', icon: Newspaper, href: '/admin/news' },
     { id: 'stock-news', label: 'Stock News', icon: TrendingUp, href: '/admin/stock-news' },
     { id: 'market-news', label: 'Market News', icon: FileText, href: '/admin/market-news' },
+    { id: 'results', label: 'Results & Events', icon: DollarSign, href: '/admin/results' },
+    { id: 'intraday-picks', label: 'Intraday Picks', icon: Target, href: '/admin/intraday-picks' },
     { id: 'users', label: 'User Management', icon: Users, href: '/admin/users' },
     { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/settings' },
   ];
@@ -119,7 +124,7 @@ export default function AdminDashboard() {
             {/* Quick Actions */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
                 <Link
                   href="/admin/news/new"
                   className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
@@ -148,6 +153,46 @@ export default function AdminDashboard() {
                   <div>
                     <p className="font-medium text-gray-900">Add Market News</p>
                     <p className="text-sm text-gray-600">Market updates</p>
+                  </div>
+                </Link>
+                <Link
+                  href="/admin/stock-news"
+                  className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 transition-colors"
+                >
+                  <TrendingUp className="w-5 h-5 text-green-600" />
+                  <div>
+                    <p className="font-medium text-gray-900">Manage Stock News</p>
+                    <p className="text-sm text-gray-600">Company updates</p>
+                  </div>
+                </Link>
+                <Link
+                  href="/admin/market-news"
+                  className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors"
+                >
+                  <Globe className="w-5 h-5 text-purple-600" />
+                  <div>
+                    <p className="font-medium text-gray-900">Manage Market News</p>
+                    <p className="text-sm text-gray-600">Global updates</p>
+                  </div>
+                </Link>
+                <Link
+                  href="/admin/results"
+                  className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition-colors"
+                >
+                  <DollarSign className="w-5 h-5 text-orange-600" />
+                  <div>
+                    <p className="font-medium text-gray-900">Manage Results</p>
+                    <p className="text-sm text-gray-600">Earnings & events</p>
+                  </div>
+                </Link>
+                <Link
+                  href="/admin/intraday-picks"
+                  className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                >
+                  <Target className="w-5 h-5 text-blue-600" />
+                  <div>
+                    <p className="font-medium text-gray-900">Manage Intraday Picks</p>
+                    <p className="text-sm text-gray-600">Trading signals</p>
                   </div>
                 </Link>
               </div>

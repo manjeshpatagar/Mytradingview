@@ -12,20 +12,8 @@ export default function StockNews() {
       summary: 'Reliance Industries reported better-than-expected Q3 results with strong performance in retail and digital services.',
       sentiment: 'Positive',
       time: '2 hours ago',
-      source: 'Economic Times',
-      impact: 'High',
-      url: '#'
-    },
-       {
-      id: 1,
-      title: 'Reliance Industries Q3 Results Beat Estimates',
-      company: 'RELIANCE',
-      summary: 'Reliance Industries reported better-than-expected Q3 results with strong performance in retail and digital services.',
-      sentiment: 'Positive',
-      time: '2 hours ago',
-      source: 'Economic Times',
-      impact: 'High',
-      url: '#'
+      url: '#',
+      image: '/images/reliance-earnings.jpg'
     },
     {
       id: 2,
@@ -34,9 +22,8 @@ export default function StockNews() {
       summary: 'Tata Consultancy Services partners with leading AI firm to enhance digital transformation capabilities.',
       sentiment: 'Positive',
       time: '4 hours ago',
-      source: 'Business Standard',
-      impact: 'Medium',
-      url: '#'
+      url: '#',
+      image: '/images/tcs-ai.jpg'
     },
     {
       id: 3,
@@ -45,9 +32,8 @@ export default function StockNews() {
       summary: 'Infosys reports delays in some client projects due to macroeconomic uncertainties.',
       sentiment: 'Negative',
       time: '6 hours ago',
-      source: 'Financial Express',
-      impact: 'Medium',
-      url: '#'
+      url: '#',
+      image: '/images/infosys-delays.jpg'
     },
     {
       id: 4,
@@ -56,9 +42,8 @@ export default function StockNews() {
       summary: 'HDFC Bank launches new digital banking features to enhance customer experience.',
       sentiment: 'Positive',
       time: '8 hours ago',
-      source: 'Mint',
-      impact: 'Low',
-      url: '#'
+      url: '#',
+      image: '/images/hdfc-digital.jpg'
     },
     {
       id: 5,
@@ -67,9 +52,8 @@ export default function StockNews() {
       summary: 'Wipro secures a significant IT services contract from a Fortune 500 company.',
       sentiment: 'Positive',
       time: '10 hours ago',
-      source: 'Economic Times',
-      impact: 'High',
-      url: '#'
+      url: '#',
+      image: '/images/wipro-contract.jpg'
     },
     {
       id: 6,
@@ -78,9 +62,8 @@ export default function StockNews() {
       summary: 'ITC shows robust growth in FMCG segment with improved market share.',
       sentiment: 'Positive',
       time: '12 hours ago',
-      source: 'Business Standard',
-      impact: 'Medium',
-      url: '#'
+      url: '#',
+      image: '/images/itc-fmcg.jpg'
     }
   ];
 
@@ -130,6 +113,16 @@ export default function StockNews() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
             >
+              <div className="relative">
+                <img 
+                  src={item.image} 
+                  alt={item.title}
+                  className="w-full h-48 object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = '/images/placeholder.jpg';
+                  }}
+                />
+              </div>
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-2">
@@ -143,9 +136,7 @@ export default function StockNews() {
                       {item.sentiment}
                     </span>
                   </div>
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getImpactColor(item.impact)}`}>
-                    {item.impact} Impact
-                  </span>
+                 
                 </div>
                 
                 <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">
@@ -162,7 +153,7 @@ export default function StockNews() {
                       <Clock className="w-4 h-4 mr-1" />
                       {item.time}
                     </div>
-                    <span>{item.source}</span>
+                  
                   </div>
                   <a 
                     href={item.url}

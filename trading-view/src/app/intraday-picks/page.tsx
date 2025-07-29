@@ -1,13 +1,12 @@
 'use client';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Clock, TrendingUp, TrendingDown, DollarSign, Target, ArrowRight } from 'lucide-react';
+import { Clock, TrendingUp, DollarSign, Target, ArrowRight } from 'lucide-react';
 
 export default function IntradayPicks() {
   const today = new Date();
   const formatDate = (d: Date) => d.toISOString().split('T')[0];
 
-  // 7 Dates for filtering
   const last7Days = Array.from({ length: 7 }).map((_, i) => {
     const d = new Date(today.getTime() - i * 86400000);
     return formatDate(d);
@@ -19,72 +18,42 @@ export default function IntradayPicks() {
     {
       id: 1,
       date: formatDate(today),
-      symbol: 'AAPL',
-      company: 'Apple Inc.',
-      entry: 185.5,
-      target: 192.0,
-      stopLoss: 182.0,
-      direction: 'BUY',
-    },
-      {
-      id: 1,
-      date: formatDate(today),
-      symbol: 'AAPL',
-      company: 'Apple Inc.',
-      entry: 185.5,
-      target: 192.0,
-      stopLoss: 182.0,
-      direction: 'BUY',
-    },
-      {
-      id: 1,
-      date: formatDate(today),
-      symbol: 'AAPL',
-      company: 'Apple Inc.',
-      entry: 185.5,
-      target: 192.0,
-      stopLoss: 182.0,
-      direction: 'BUY',
+      symbol: 'TATA MOTORS',
+      price: 950,
+      buyAbove: 960,
+      buyTarget: 985,
+      sellBelow: 945,
+      sellTarget: 920,
     },
     {
       id: 2,
       date: formatDate(today),
-      symbol: 'TSLA',
-      company: 'Tesla Inc.',
-      entry: 245.8,
-      target: 252.0,
-      stopLoss: 242.0,
-      direction: 'BUY',
+      symbol: 'RELIANCE',
+      price: 2850,
+      buyAbove: 2875,
+      buyTarget: 2920,
+      sellBelow: 2830,
+      sellTarget: 2785,
     },
     {
       id: 3,
       date: formatDate(new Date(today.getTime() - 1 * 86400000)),
-      symbol: 'GOOGL',
-      company: 'Alphabet Inc.',
-      entry: 142.5,
-      target: 138.0,
-      stopLoss: 145.0,
-      direction: 'SELL',
+      symbol: 'INFY',
+      price: 1500,
+      buyAbove: 1600,
+      buyTarget: 1625,
+      sellBelow: 1585,
+      sellTarget: 1560,
     },
     {
       id: 4,
       date: formatDate(new Date(today.getTime() - 2 * 86400000)),
-      symbol: 'MSFT',
-      company: 'Microsoft Corp.',
-      entry: 378.2,
-      target: 385.0,
-      stopLoss: 375.0,
-      direction: 'BUY',
-    },
-    {
-      id: 5,
-      date: formatDate(new Date(today.getTime() - 3 * 86400000)),
-      symbol: 'AMZN',
-      company: 'Amazon.com Inc.',
-      entry: 155.8,
-      target: 162.0,
-      stopLoss: 153.0,
-      direction: 'BUY',
+      symbol: 'HDFC BANK',
+      price: 1650,
+      buyAbove: 1650,
+      buyTarget: 1680,
+      sellBelow: 1620,
+      sellTarget: 1595,
     },
   ];
 
@@ -116,14 +85,6 @@ export default function IntradayPicks() {
       color: 'text-orange-600',
     },
   ];
-
-  const getDirectionColor = (direction: string) => {
-    return direction === 'BUY' ? 'text-green-600' : 'text-red-600';
-  };
-
-  const getDirectionBg = (direction: string) => {
-    return direction === 'BUY' ? 'bg-green-100' : 'bg-red-100';
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -172,11 +133,10 @@ export default function IntradayPicks() {
             <button
               key={date}
               onClick={() => setSelectedDate(date)}
-              className={`px-4 py-2 rounded-full text-sm font-medium border ${
-                selectedDate === date
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
-              }`}
+              className={`px-4 py-2 rounded-full text-sm font-medium border ${selectedDate === date
+                ? 'bg-blue-600 text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-100'
+                }`}
             >
               {date}
             </button>
@@ -194,11 +154,12 @@ export default function IntradayPicks() {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-4 text-left text-lg font-medium text-gray-700 uppercase tracking-wider">Stock</th>
-                  <th className="px-6 py-4 text-left text-lg font-medium text-gray-700 uppercase tracking-wider">Entry</th>
-                  <th className="px-6 py-4 text-left text-lg font-medium text-gray-700 uppercase tracking-wider">Target</th>
-                  <th className="px-6 py-4 text-left text-lg font-medium text-gray-700 uppercase tracking-wider">Stop Loss</th>
-                  <th className="px-6 py-4 text-left text-lg font-medium text-gray-700 uppercase tracking-wider">Direction</th>
+                  <th className="px-6 py-4 text-left text-lg font-medium text-gray-700 uppercase">Stock</th>
+                  <th className="px-6 py-4 text-left text-lg font-medium text-blue-600 uppercase">Price</th>
+                  <th className="px-6 py-4 text-left text-lg font-medium text-green-700 uppercase">Buy Above</th>
+                  <th className="px-6 py-4 text-left text-lg font-medium text-green-700 uppercase">Buy Target</th>
+                  <th className="px-6 py-4 text-left text-lg font-medium text-red-700 uppercase">Sell Below</th>
+                  <th className="px-6 py-4 text-left text-lg font-medium text-red-700 uppercase">Sell Target</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -208,26 +169,16 @@ export default function IntradayPicks() {
                       key={pick.id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
                       className="hover:bg-gray-50 transition-colors cursor-pointer"
                     >
-                      <td className="px-6 py-4">
-                        <div className="text-sm font-semibold text-gray-900">{pick.symbol}</div>
-                        <div className="text-sm text-gray-500">{pick.company}</div>
-                      </td>
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">${pick.entry.toFixed(2)}</td>
-                      <td className="px-6 py-4 text-sm font-medium text-green-600">${pick.target.toFixed(2)}</td>
-                      <td className="px-6 py-4 text-sm font-medium text-red-600">${pick.stopLoss.toFixed(2)}</td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getDirectionBg(pick.direction)} ${getDirectionColor(pick.direction)}`}>
-                          {pick.direction === 'BUY' ? (
-                            <TrendingUp className="w-3 h-3 mr-1" />
-                          ) : (
-                            <TrendingDown className="w-3 h-3 mr-1" />
-                          )}
-                          {pick.direction}
-                        </span>
-                      </td>
+                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">{pick.symbol}</td>
+                      <td className="px-6 py-4 text-sm text-blue-600">₹{pick.price}</td>
+
+                      <td className="px-6 py-4 text-sm text-green-700 font-medium">₹{pick.buyAbove}</td>
+                      <td className="px-6 py-4 text-sm text-green-700 font-medium">₹{pick.buyTarget}</td>
+                      <td className="px-6 py-4 text-sm text-red-600 font-medium">₹{pick.sellBelow}</td>
+                      <td className="px-6 py-4 text-sm text-red-600 font-medium">₹{pick.sellTarget}</td>
                     </motion.tr>
                   ))
                 ) : (
@@ -242,13 +193,18 @@ export default function IntradayPicks() {
           </div>
         </div>
 
-         {/* Disclaimer */}
-      <div className="p-4 text-sm text-gray-600 bg-yellow-100 border border-yellow-300 rounded mt-6">
-  <strong>Disclaimer:</strong> The stock picks and levels (entry, target, and stop loss) shared on this page are for educational and informational purposes only. We are not SEBI-registered investment advisors. Trading and investing involve significant financial risk. Always consult with a registered financial advisor before making any trading decisions.
-</div>
+        {/* Disclaimer */}
+        <div className="p-4 text-sm text-gray-600 bg-yellow-100 border border-yellow-300 rounded mt-6">
+          <strong>Disclaimer:</strong> Note: The "Buy Above" or "Sell Below" levels provided are for informational and educational purposes only.
 
+          Once the stock crosses the "Buy Above" level, you may consider entering the trade — but we do not guarantee the stock will reach the full target. It is recommended to book 2–3% profit and exit safely if the stock shows resistance or lacks momentum.
 
-        {/* CTA Section */}
+          The same rule applies for Sell Below setups — aim for small, safe profits and avoid waiting for full target if the trend weakens.
+
+          We are not SEBI-registered advisors. Trade at your own risk and always use stop-loss to manage risk effectively.
+        </div>
+
+        {/* CTA */}
         <div className="mt-12 text-center">
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white">
             <h3 className="text-2xl font-bold mb-4">Ready to Start Trading?</h3>
@@ -264,13 +220,3 @@ export default function IntradayPicks() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-  

@@ -12,9 +12,8 @@ export default function MarketNews() {
       summary: 'Indian markets surge to record levels as global risk sentiment improves and foreign investors continue buying.',
       sentiment: 'Positive',
       time: '1 hour ago',
-      source: 'Economic Times',
-      impact: 'High',
-      url: '#'
+      url: '#',
+      image: '/images/sensex-high.jpg'
     },
     {
       id: 2,
@@ -23,9 +22,8 @@ export default function MarketNews() {
       summary: 'Reserve Bank of India keeps interest rates unchanged while maintaining accommodative stance for growth.',
       sentiment: 'Neutral',
       time: '3 hours ago',
-      source: 'Business Standard',
-      impact: 'High',
-      url: '#'
+      url: '#',
+      image: '/images/rbi-policy.jpg'
     },
     {
       id: 3,
@@ -34,9 +32,8 @@ export default function MarketNews() {
       summary: 'Crude oil prices decline as concerns over global economic slowdown weigh on demand outlook.',
       sentiment: 'Negative',
       time: '5 hours ago',
-      source: 'Financial Express',
-      impact: 'Medium',
-      url: '#'
+      url: '#',
+      image: '/images/oil-prices.jpg'
     },
     {
       id: 4,
@@ -45,9 +42,8 @@ export default function MarketNews() {
       summary: 'Federal Reserve officials indicate possible interest rate reductions as inflation shows signs of cooling.',
       sentiment: 'Positive',
       time: '7 hours ago',
-      source: 'Reuters',
-      impact: 'High',
-      url: '#'
+      url: '#',
+      image: '/images/fed-rates.jpg'
     },
     {
       id: 5,
@@ -56,9 +52,8 @@ export default function MarketNews() {
       summary: 'Indian rupee gains ground against US dollar supported by strong foreign fund inflows.',
       sentiment: 'Positive',
       time: '9 hours ago',
-      source: 'Mint',
-      impact: 'Medium',
-      url: '#'
+      url: '#',
+      image: '/images/rupee-dollar.jpg'
     },
     {
       id: 6,
@@ -67,9 +62,8 @@ export default function MarketNews() {
       summary: 'Gold prices surge to all-time high as investors seek safe haven amid market volatility.',
       sentiment: 'Positive',
       time: '11 hours ago',
-      source: 'Economic Times',
-      impact: 'Medium',
-      url: '#'
+      url: '#',
+      image: '/images/gold-prices.jpg'
     }
   ];
 
@@ -121,6 +115,16 @@ export default function MarketNews() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
             >
+              <div className="relative">
+                <img 
+                  src={item.image} 
+                  alt={item.title}
+                  className="w-full h-48 object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = '/images/placeholder.jpg';
+                  }}
+                />
+              </div>
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-2">
@@ -136,28 +140,26 @@ export default function MarketNews() {
                       {item.sentiment}
                     </span>
                   </div>
-                  <span className="text-xs text-gray-500 font-medium">
-                    {item.impact} Impact
-                  </span>
+              
                 </div>
-                
+
                 <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">
                   {item.title}
                 </h3>
-                
+
                 <p className="text-gray-600 mb-4 line-clamp-3">
                   {item.summary}
                 </p>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4 text-sm text-gray-500">
                     <div className="flex items-center">
                       <Clock className="w-4 h-4 mr-1" />
                       {item.time}
                     </div>
-                    <span>{item.source}</span>
+                   
                   </div>
-                  <a 
+                  <a
                     href={item.url}
                     className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm"
                   >
@@ -187,7 +189,7 @@ export default function MarketNews() {
               <h3 className="text-sm font-medium text-gray-800">Market News Disclaimer</h3>
               <div className="mt-2 text-sm text-gray-600">
                 <p>
-                  Market news is sourced from various financial publications. This information is for 
+                  Market news is sourced from various financial publications. This information is for
                   educational purposes only and should not be considered as investment advice.
                 </p>
               </div>
