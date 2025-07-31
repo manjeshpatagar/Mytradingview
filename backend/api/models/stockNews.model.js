@@ -23,13 +23,8 @@ const stockNewsSchema = new mongoose.Schema(
     sentiment: {
       type: String,
       required: [true, "sentiment is required"],
-      enum: ["positive", "natural", "negative"],
+      enum: ["positive", "neutral", "negative"],
       lowercase: true,
-    },
-    price: {
-      type: Number,
-      required: [true, "Price is required"],
-      min: 0,
     },
     title: {
       type: String,

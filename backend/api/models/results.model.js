@@ -5,7 +5,7 @@ const resultsSchema = new mongoose.Schema(
     type: {
       type: String,
       required: [true, "Type is required"],
-      enum: ["earnings", "dividend", "events"],
+      enum: ["earnings", "dividend", "event"],
       lowercase: true,
     },
     importance: {

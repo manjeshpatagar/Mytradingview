@@ -11,7 +11,7 @@ const marketNewsSchema = new mongoose.Schema(
     sentiment: {
       type: String,
       required: [true, "sentiment is required"],
-      enum: ["positive", "natural", "negative"],
+      enum: ["positive", "neutral", "negative"],
       lowercase: true,
     },
     title: {
@@ -19,9 +19,9 @@ const marketNewsSchema = new mongoose.Schema(
       required: [true, "Title is required"],
       trim: true,
     },
-    description: {
+    summary: {
       type: String,
-      required: [true, "Description is required"],
+      required: [true, "Summary is required"],
       trim: true,
     },
     image: {
