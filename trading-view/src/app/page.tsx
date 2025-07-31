@@ -2,14 +2,14 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { 
-  TrendingUp, 
-  Target, 
-  Users, 
-  Globe, 
-  ArrowRight, 
-  Play, 
-  Star, 
+import {
+  TrendingUp,
+  Target,
+  Users,
+  Globe,
+  ArrowRight,
+  Play,
+  Star,
   CheckCircle,
   BarChart3,
   Shield,
@@ -62,49 +62,49 @@ export default function Home() {
     { label: "Countries", value: "150+" }
   ];
 
- const testimonials = [
-  {
-    name: "Ravi Mehta",
-    role: "Intraday Trader, Mumbai",
-    content: "buy/sell levels are pure gold! I used to struggle to enter at the right time, but now my accuracy has improved drastically. Highly recommended for serious traders.",
-    rating: 5
-  },
-  {
-    name: "Neha Sharma",
-    role: "Swing Trader, Delhi",
-    content: "The intraday signals and news-based stock alerts helped me catch moves I would have otherwise missed. Very practical and well-explained strategy. Great work!",
-    rating: 5
-  },
-  {
-    name: "Amit Raj",
-    role: "College Student, Patna",
-    content: "As a beginner, I found the daily levels easy to follow. I made my first profitable trade using the buy-above and sell-below levels shared in the morning updates.",
-    rating: 5
-  },
-  {
-    name: "Priya Nair",
-    role: "Part-time Trader, Bangalore",
-    content: "The news-based trades are on point! I caught a 4% move on a result-based stock exactly as mentioned in the Trade Plan. No fluff—just actionable data.",
-    rating: 5
-  },
-  {
-    name: "Siddharth Rao",
-    role: "Full-time Trader, Hyderabad",
-    content: "Been following for 2 months now. The success ratio on intraday picks is solid, and the reasoning behind each trade boosts my confidence before entering.",
-    rating: 5
-  },
-   {
-    name: "Sarah Johnson",
-    role: "Professional Trader",
-    content: "This platform transformed my trading. The signals are incredibly accurate and the community support is amazing.",
-    rating: 5
-  }
-];
+  const testimonials = [
+    {
+      name: "Ravi Mehta",
+      role: "Intraday Trader, Mumbai",
+      content: "buy/sell levels are pure gold! I used to struggle to enter at the right time, but now my accuracy has improved drastically. Highly recommended for serious traders.",
+      rating: 5
+    },
+    {
+      name: "Neha Sharma",
+      role: "Swing Trader, Delhi",
+      content: "The intraday signals and news-based stock alerts helped me catch moves I would have otherwise missed. Very practical and well-explained strategy. Great work!",
+      rating: 5
+    },
+    {
+      name: "Amit Raj",
+      role: "College Student, Patna",
+      content: "As a beginner, I found the daily levels easy to follow. I made my first profitable trade using the buy-above and sell-below levels shared in the morning updates.",
+      rating: 5
+    },
+    {
+      name: "Priya Nair",
+      role: "Part-time Trader, Bangalore",
+      content: "The news-based trades are on point! I caught a 4% move on a result-based stock exactly as mentioned in the Trade Plan. No fluff—just actionable data.",
+      rating: 5
+    },
+    {
+      name: "Siddharth Rao",
+      role: "Full-time Trader, Hyderabad",
+      content: "Been following for 2 months now. The success ratio on intraday picks is solid, and the reasoning behind each trade boosts my confidence before entering.",
+      rating: 5
+    },
+    {
+      name: "Sarah Johnson",
+      role: "Professional Trader",
+      content: "This platform transformed my trading. The signals are incredibly accurate and the community support is amazing.",
+      rating: 5
+    }
+  ];
 
 
   const navigationItems = [
     { name: 'Intraday Picks', href: '/intraday-picks', icon: Target },
-    { name: 'Results', href: '/results', icon: Calendar },
+    { name: 'Stock Events', href: '/results', icon: Calendar },
     { name: 'Stock News', href: '/stock-news', icon: Newspaper },
     { name: 'Market News', href: '/market-news', icon: Globe },
     { name: 'Trade Plan', href: '/trade-plan', icon: BookOpen },
@@ -123,7 +123,7 @@ export default function Home() {
                 <span className="text-2xl font-bold text-white">TradeView Pro</span>
               </Link>
             </div>
-            
+
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="nav-link">Features</a>
               <a href="#testimonials" className="nav-link">Reviews</a>
@@ -144,15 +144,15 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="mb-12"
           >
-           <h1 className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight">
-  Trade Smarter with India’s Most Precise
-  <span className="bg-gradient-to-r from-yellow-400 to-red-400 bg-clip-text text-transparent"> Stock Screener</span>
-</h1>
-<p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
-  Discover high-potential stocks using daily levels, result-based picks, and real market news—trusted by thousands of active traders.
-</p>
+            <h1 className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight">
+              Trade Smarter with India’s Most Precise
+              <span className="bg-gradient-to-r from-yellow-400 to-red-400 bg-clip-text text-transparent"> Stock Screener</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+              Discover high-potential stocks using daily levels, result-based picks, and real market news—trusted by thousands of active traders.
+            </p>
 
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link href="/intraday-picks" className="btn-primary text-lg px-8 py-4">
                 Get Started Today
@@ -183,7 +183,7 @@ export default function Home() {
       </section>
 
 
-        {/* Quick Access Section */}
+      {/* Quick Access Section */}
       <section className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -341,7 +341,7 @@ export default function Home() {
                 <span className="text-2xl font-bold text-white">TradeView Pro</span>
               </div>
               <p className="text-gray-400 mb-6 max-w-md leading-relaxed">
-                Advanced trading platform powered by AI and real-time analytics. 
+                Advanced trading platform powered by AI and real-time analytics.
                 Join thousands of successful traders worldwide.
               </p>
               <div className="flex space-x-4">
@@ -356,17 +356,17 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            
+
             <div>
               <h3 className="text-white font-semibold mb-4">Trading Tools</h3>
               <ul className="space-y-2">
                 <li><Link href="/intraday-picks" className="text-gray-400 hover:text-white transition-colors">Intraday Picks</Link></li>
-                <li><Link href="/results" className="text-gray-400 hover:text-white transition-colors">Results</Link></li>
+                <li><Link href="/results" className="text-gray-400 hover:text-white transition-colors">Stock Events</Link></li>
                 <li><Link href="/stock-news" className="text-gray-400 hover:text-white transition-colors">Stock News</Link></li>
                 <li><Link href="/market-news" className="text-gray-400 hover:text-white transition-colors">Market News</Link></li>
               </ul>
             </div>
-            
+
             <div>
               <h3 className="text-white font-semibold mb-4">Resources</h3>
               <ul className="space-y-2">
@@ -377,7 +377,7 @@ export default function Home() {
               </ul>
             </div>
           </div>
-          
+
           <div className="border-t border-white/10 mt-8 pt-8 text-center">
             <p className="text-gray-400">
               © 2024 TradeView Pro. All rights reserved. Trading involves risk.

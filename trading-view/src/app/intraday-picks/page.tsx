@@ -1,7 +1,16 @@
 'use client';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Clock, TrendingUp, DollarSign, Target, ArrowRight } from 'lucide-react';
+import {
+  Clock,
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  Target,
+  ArrowRight,
+  Info,
+  Star
+} from 'lucide-react';
 
 export default function IntradayPicks() {
   const today = new Date();
@@ -35,86 +44,40 @@ export default function IntradayPicks() {
       sellBelow: 2830,
       sellTarget: 2785,
     },
-       {
-      id: 2,
-      date: formatDate(today),
-      symbol: 'RELIANCE',
-      price: 2850,
-      buyAbove: 2875,
-      buyTarget: 2920,
-      sellBelow: 2830,
-      sellTarget: 2785,
-    },
-       {
-      id: 2,
-      date: formatDate(today),
-      symbol: 'RELIANCE',
-      price: 2850,
-      buyAbove: 2875,
-      buyTarget: 2920,
-      sellBelow: 2830,
-      sellTarget: 2785,
-    },
-       {
-      id: 2,
-      date: formatDate(today),
-      symbol: 'RELIANCE',
-      price: 2850,
-      buyAbove: 2875,
-      buyTarget: 2920,
-      sellBelow: 2830,
-      sellTarget: 2785,
-    },
     {
       id: 3,
-      date: formatDate(new Date(today.getTime() - 1 * 86400000)),
+      date: formatDate(today),
       symbol: 'INFY',
       price: 1500,
-      buyAbove: 1600,
-      buyTarget: 1625,
-      sellBelow: 1585,
-      sellTarget: 1560,
+      buyAbove: 1520,
+      buyTarget: 1560,
+      sellBelow: 1480,
+      sellTarget: 1445,
     },
     {
       id: 4,
-      date: formatDate(new Date(today.getTime() - 2 * 86400000)),
+      date: formatDate(new Date(today.getTime() - 1 * 86400000)),
       symbol: 'HDFC BANK',
       price: 1650,
-      buyAbove: 1650,
+      buyAbove: 1655,
       buyTarget: 1680,
       sellBelow: 1620,
       sellTarget: 1595,
     },
+    {
+      id: 5,
+      date: formatDate(new Date(today.getTime() - 2 * 86400000)),
+      symbol: 'ICICI BANK',
+      price: 935,
+      buyAbove: 950,
+      buyTarget: 975,
+      sellBelow: 920,
+      sellTarget: 890,
+    },
+    
   ];
 
   const filteredPicks = allPicks.filter(p => p.date === selectedDate);
-
-
-  //   {
-  //     label: 'Total Picks',
-  //     value: allPicks.length.toString(),
-  //     icon: Target,
-  //     color: 'text-blue-600',
-  //   },
-  //   {
-  //     label: 'Success Rate',
-  //     value: '87%',
-  //     icon: TrendingUp,
-  //     color: 'text-green-600',
-  //   },
-  //   {
-  //     label: 'Avg Return',
-  //     value: '+4.2%',
-  //     icon: DollarSign,
-  //     color: 'text-purple-600',
-  //   },
-  //   {
-  //     label: 'Active Signals',
-  //     value: filteredPicks.length.toString(),
-  //     icon: Clock,
-  //     color: 'text-orange-600',
-  //   },
-  // ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -134,21 +97,24 @@ export default function IntradayPicks() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-    
         {/* Date Selector */}
         <div className="flex flex-wrap gap-2 mb-6">
-          {last7Days.map(date => (
-            <button
-              key={date}
-              onClick={() => setSelectedDate(date)}
-              className={`px-4 py-2 rounded-full text-sm font-medium border ${selectedDate === date
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100'
+          {last7Days.map(date => {
+            const isToday = date === formatDate(today);
+            return (
+              <button
+                key={date}
+                onClick={() => setSelectedDate(date)}
+                className={`px-4 py-2 rounded-full text-sm font-medium border ${
+                  selectedDate === date
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-gray-700 hover:bg-gray-100'
                 }`}
-            >
-              {date}
-            </button>
-          ))}
+              >
+                {isToday ? 'Today' : date}
+              </button>
+            );
+          })}
         </div>
 
         {/* Picks Table */}
@@ -163,11 +129,21 @@ export default function IntradayPicks() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-4 text-left text-lg font-medium text-gray-700 uppercase">Stock</th>
-                  <th className="px-6 py-4 text-left text-lg font-medium text-blue-600 uppercase">Price</th>
-                  <th className="px-6 py-4 text-left text-lg font-medium text-green-700 uppercase">Buy Above</th>
-                  <th className="px-6 py-4 text-left text-lg font-medium text-green-700 uppercase">Target</th>
-                  <th className="px-6 py-4 text-left text-lg font-medium text-red-700 uppercase">Sell Below</th>
-                  <th className="px-6 py-4 text-left text-lg font-medium text-red-700 uppercase">Target</th>
+                  <th className="px-6 py-4 text-left text-lg font-medium text-blue-600 uppercase">
+                    <DollarSign className="inline w-4 h-4 mr-1" />Price
+                  </th>
+                  <th className="px-6 py-4 text-left text-lg font-medium text-green-700 uppercase" title="Price to trigger a Buy trade">
+                    <TrendingUp className="inline w-4 h-4 mr-1" />Buy Above
+                  </th>
+                  <th className="px-6 py-4 text-left text-lg font-medium text-green-700 uppercase" title="Expected upside target">
+                    🎯 Target
+                  </th>
+                  <th className="px-6 py-4 text-left text-lg font-medium text-red-700 uppercase" title="Price to trigger a Sell trade">
+                    <TrendingDown className="inline w-4 h-4 mr-1" />Sell Below
+                  </th>
+                  <th className="px-6 py-4 text-left text-lg font-medium text-red-700 uppercase" title="Expected downside target">
+                    🎯 Target
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -180,18 +156,17 @@ export default function IntradayPicks() {
                       transition={{ duration: 0.5, delay: index * 0.1 }}
                       className="hover:bg-gray-50 transition-colors cursor-pointer"
                     >
-                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">{pick.symbol}</td>
-                      <td className="px-6 py-4 text-sm text-blue-600">₹{pick.price}</td>
-
-                      <td className="px-6 py-4 text-sm text-green-700 font-medium">₹{pick.buyAbove}</td>
-                      <td className="px-6 py-4 text-sm text-green-700 font-medium">₹{pick.buyTarget}</td>
-                      <td className="px-6 py-4 text-sm text-red-600 font-medium">₹{pick.sellBelow}</td>
-                      <td className="px-6 py-4 text-sm text-red-600 font-medium">₹{pick.sellTarget}</td>
+                      <td className="px-6 py-4 text-md font-semibold text-gray-900">{pick.symbol}</td>
+                      <td className="px-6 py-4 text-md text-blue-600">₹{pick.price}</td>
+                      <td className="px-6 py-4 text-md text-green-700 font-medium">₹{pick.buyAbove}</td>
+                      <td className="px-6 py-4 text-md text-green-700 font-medium">₹{pick.buyTarget}</td>
+                      <td className="px-6 py-4 text-md text-red-600 font-medium">₹{pick.sellBelow}</td>
+                      <td className="px-6 py-4 text-md text-red-600 font-medium">₹{pick.sellTarget}</td>
                     </motion.tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5} className="text-center text-gray-500 py-6">
+                    <td colSpan={6} className="text-center text-gray-500 py-6">
                       No picks available for this date.
                     </td>
                   </tr>
@@ -202,24 +177,20 @@ export default function IntradayPicks() {
         </div>
 
         {/* Disclaimer */}
-        <div className="p-4 text-sm text-gray-600 bg-yellow-100 border border-yellow-300 rounded mt-6">
-          <strong>Disclaimer:</strong> Note: The "Buy Above" or "Sell Below" levels provided are for informational and educational purposes only.
-
-          Once the stock crosses the "Buy Above" level, you may consider entering the trade — but we do not guarantee the stock will reach the full target. It is recommended to book 2–3% profit and exit safely if the stock shows resistance or lacks momentum.
-
-          The same rule applies for Sell Below setups — aim for small, safe profits and avoid waiting for full target if the trend weakens.
-
-          We are not SEBI-registered advisors. Trade at your own risk and always use stop-loss to manage risk effectively.
+        <div className="p-4 text-md text-gray-600 bg-yellow-100 border border-yellow-300 rounded mt-6">
+          <strong>Disclaimer:</strong> The "Buy Above" or "Sell Below" levels are provided for educational purposes only.
+          When a stock crosses the Buy Above or Sell Below price, it's a potential trade opportunity — but hitting the full target is not guaranteed.
+          We suggest booking 2–3% profit if momentum weakens. Use stop-loss and risk management. We are not SEBI-registered advisors.
         </div>
 
-        {/* CTA */}
+        {/* Premium CTA */}
         <div className="mt-12 text-center">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white">
-            <h3 className="text-2xl font-bold mb-4">Ready to Start Trading?</h3>
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white shadow-lg">
+            <h3 className="text-2xl font-bold mb-4">Upgrade for Daily Accurate Picks</h3>
             <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-              Get access to our premium trading signals and advanced analytics to maximize your trading potential.
+              Get real-time alerts, detailed chart analysis, and exclusive trading setups. Start your 7-day free trial now!
             </p>
-            <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+            <button className="bg-white text-blue-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
               Get Premium Access <ArrowRight className="w-5 h-5 ml-2 inline" />
             </button>
           </div>
