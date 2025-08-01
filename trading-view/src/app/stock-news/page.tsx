@@ -118,9 +118,7 @@ export default function StockNews() {
                   src={item.image} 
                   alt={item.title}
                   className="w-full h-48 object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = '/images/placeholder.jpg';
-                  }}
+                 
                 />
               </div>
               <div className="p-6">

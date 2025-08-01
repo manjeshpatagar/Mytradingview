@@ -1,348 +1,271 @@
-'use client';
-
-import { motion } from 'framer-motion';
-import { 
-  Calendar, 
-  TrendingUp, 
-  DollarSign, 
-  Clock, 
-  AlertTriangle, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Save, 
+"use client";
+import React, { useEffect, useState } from "react";
+import {
+  getAllResults,
+  createResult,
+  updateResult,
+  deleteResult,
+} from "@/services/resultsService";
+import {
+  Calendar,
+  Plus,
+  Edit,
+  Trash2,
+  Save,
   X,
   Eye,
-  Filter
-} from 'lucide-react';
-import { useState } from 'react';
+  Filter,
+  AlertTriangle,
+} from "lucide-react";
+import { motion } from "framer-motion";
 
-type Event = {
-  id: string;
-  type: 'Earnings' | 'Dividend' | 'Event';
-  company: string;
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString();
+};
+
+const getTypeColor = (type: string) => {
+  switch (type) {
+    case "earnings":
+      return "bg-blue-100 text-blue-800";
+    case "dividend":
+      return "bg-green-100 text-green-800";
+    case "event":
+    default:
+      return "bg-purple-100 text-purple-800";
+  }
+};
+
+const getImportanceColor = (importance: string) => {
+  switch (importance) {
+    case "high":
+      return "bg-red-100 text-red-800";
+    case "medium":
+      return "bg-yellow-100 text-yellow-800";
+    case "low":
+    default:
+      return "bg-gray-100 text-gray-800";
+  }
+};
+
+type ResultType = {
+  _id?: string;
+  type: "earnings" | "dividend" | "event";
+  importance: "high" | "medium" | "low";
+  companyName: string;
   symbol: string;
   date: string;
   time: string;
-  importance: 'High' | 'Medium' | 'Low';
-  expectedEPS?: number;
-  previousEPS?: number;
-  dividend?: number;
-  exDate?: string;
-  description?: string;
+  description: string;
 };
 
-export default function AdminResults() {
-  const [events, setEvents] = useState<Event[]>([
-    {
-      id: '1',
-      type: 'Earnings',
-      company: 'Reliance Industries',
-      symbol: 'RELIANCE',
-      date: '2024-01-25',
-      time: 'After Market',
-      importance: 'High',
-      expectedEPS: 25.5,
-      previousEPS: 23.2,
-      description: 'Q3 FY24 Earnings Release'
-    },
-    {
-      id: '2',
-      type: 'Dividend',
-      company: 'TCS',
-      symbol: 'TCS',
-      date: '2024-01-26',
-      time: 'Record Date',
-      importance: 'Medium',
-      dividend: 24,
-      exDate: '2024-01-24',
-      description: 'Interim Dividend ₹24 per share'
-    },
-    {
-      id: '3',
-      type: 'Earnings',
-      company: 'Infosys',
-      symbol: 'INFY',
-      date: '2024-01-27',
-      time: 'Before Market',
-      importance: 'High',
-      expectedEPS: 18.7,
-      previousEPS: 17.9,
-      description: 'Q3 FY24 Earnings Release'
-    },
-    {
-      id: '4',
-      type: 'Event',
-      company: 'HDFC Bank',
-      symbol: 'HDFC',
-      date: '2024-01-28',
-      time: '10:00 AM',
-      importance: 'Medium',
-      description: 'Board Meeting - Fund Raising'
-    },
-    {
-      id: '5',
-      type: 'Dividend',
-      company: 'ITC',
-      symbol: 'ITC',
-      date: '2024-01-29',
-      time: 'Record Date',
-      importance: 'Low',
-      dividend: 6.25,
-      exDate: '2024-01-27',
-      description: 'Interim Dividend ₹6.25 per share'
-    },
-    {
-      id: '6',
-      type: 'Earnings',
-      company: 'Wipro',
-      symbol: 'WIPRO',
-      date: '2024-01-30',
-      time: 'After Market',
-      importance: 'High',
-      expectedEPS: 12.3,
-      previousEPS: 11.8,
-      description: 'Q3 FY24 Earnings Release'
-    }
-  ]);
-
-  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [filterType, setFilterType] = useState<string>('All');
-
-
-  const stats = [
-    { title: 'Total Events', value: events.length.toString(), change: '+3', icon: Calendar },
-    { title: 'Earnings', value: events.filter(e => e.type === 'Earnings').length.toString(), change: '+2', icon: TrendingUp },
-    { title: 'Dividends', value: events.filter(e => e.type === 'Dividend').length.toString(), change: '+1', icon: Clock },
-    { title: 'Events', value: events.filter(e => e.type === 'Event').length.toString(), change: '+0', icon: AlertTriangle }
-  ];
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  };
-
-  const getImportanceColor = (importance: string) => {
-    switch (importance) {
-      case 'High': return 'bg-red-100 text-red-800';
-      case 'Medium': return 'bg-yellow-100 text-yellow-800';
-      case 'Low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'Earnings': return 'bg-blue-100 text-blue-800';
-      case 'Dividend': return 'bg-green-100 text-green-800';
-      case 'Event': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-
-
-  const filteredEvents = events.filter(event => {
-    const typeMatch = filterType === 'All' || event.type === filterType;
-    return typeMatch;
+const ResultsAdminPage = () => {
+  const [results, setResults] = useState<ResultType[]>([]);
+  const [formData, setFormData] = useState<ResultType>({
+    type: "event",
+    importance: "medium",
+    companyName: "",
+    symbol: "",
+    date: "",
+    time: "",
+    description: "",
   });
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [filterType, setFilterType] = useState("All");
 
-  const handleEdit = (event: Event) => {
-    setEditingEvent({ ...event });
+  const fetchResults = async () => {
+    try {
+      const res = await getAllResults();
+      setResults(res.data?.data || []);
+    } catch (err) {
+      console.error("Failed to fetch results", err);
+    }
   };
 
-  const handleSave = () => {
-    if (editingEvent) {
-      setEvents(events.map(e => e.id === editingEvent.id ? editingEvent : e));
-      setEditingEvent(null);
+  useEffect(() => {
+    fetchResults();
+  }, []);
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      if (editingId) {
+        await updateResult(editingId, formData);
+      } else {
+        await createResult(formData);
+      }
+      fetchResults();
+      resetForm();
+    } catch (err) {
+      console.error("Submit failed", err);
     }
   };
 
   const handleCancel = () => {
-    setEditingEvent(null);
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setFormData({
+      type: "event",
+      importance: "medium",
+      companyName: "",
+      symbol: "",
+      date: "",
+      time: "",
+      description: "",
+    });
+    setEditingId(null);
     setShowAddForm(false);
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this event?')) {
-      setEvents(events.filter(e => e.id !== id));
-    }
+  const handleEdit = (item: ResultType) => {
+    setFormData(item);
+    setEditingId(item._id || null);
   };
 
-  const handleAdd = (newEvent: Omit<Event, 'id'>) => {
-    const event: Event = {
-      ...newEvent,
-      id: Date.now().toString()
-    };
-    setEvents([...events, event]);
-    setShowAddForm(false);
+  const handleDelete = async (id?: string) => {
+    if (!id) return;
+    await deleteResult(id);
+    fetchResults();
   };
+
+  const filteredResults =
+    filterType === "All"
+      ? results
+      : results.filter((r) => r.type === filterType.toLowerCase());
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Admin - Results & Events</h1>
-                <p className="text-gray-600">Manage earnings, dividends, and corporate events</p>
-              </div>
+        <div className="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <Calendar className="w-6 h-6 text-white" />
             </div>
-            <button
-              onClick={() => setShowAddForm(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Event</span>
-            </button>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Admin - Results & Events
+              </h1>
+              <p className="text-gray-600">
+                Manage earnings, dividends, and corporate events
+              </p>
+            </div>
           </div>
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Result</span>
+          </button>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <motion.div
-                key={stat.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white rounded-xl p-6 shadow-sm border border-gray-200"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                    <p className="text-sm text-green-600 font-medium">{stat.change} from last week</p>
-                  </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Filters */}
         <div className="bg-white rounded-xl p-6 mb-6 shadow-sm border border-gray-200">
-          <div className="flex flex-wrap gap-4 items-center">
-            <div className="flex items-center space-x-2">
-              <Filter className="w-4 h-4 text-gray-500" />
-              <span className="text-sm font-medium text-gray-700">Filters:</span>
-            </div>
+          <div className="flex items-center gap-3">
+            <Filter className="w-4 h-4 text-gray-500" />
+            <span className="text-sm font-medium text-gray-700">Filter:</span>
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="All">All Types</option>
-              <option value="Earnings">Earnings</option>
-              <option value="Dividend">Dividend</option>
-              <option value="Event">Event</option>
+              <option value="earnings">Earnings</option>
+              <option value="dividend">Dividend</option>
+              <option value="event">Event</option>
             </select>
-
           </div>
         </div>
 
-        {/* Events Table */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-xl font-semibold text-gray-900">Manage Events</h2>
-            <p className="text-gray-600">Edit, delete, and manage corporate events</p>
           </div>
-          
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Importance</th>
-
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Type
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Company
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Date & Time
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Description
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Importance
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredEvents.map((event, index) => (
+                {filteredResults.map((event, index) => (
                   <motion.tr
-                    key={event.id}
+                    key={event._id}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="hover:bg-gray-50 transition-colors"
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    className="hover:bg-gray-50"
                   >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTypeColor(event.type)}`}>
+                    <td className="px-6 py-4 text-sm">
+                      <span className={`px-2 py-1 rounded-full ${getTypeColor(event.type)}`}>
                         {event.type}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-semibold text-gray-900">{event.company}</div>
-                        <div className="text-sm text-gray-500">{event.symbol}</div>
+                    <td className="px-6 py-4 text-sm">
+                      <div className="font-semibold text-gray-900">
+                        {event.companyName}
                       </div>
+                      <div className="text-gray-500">{event.symbol}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-semibold text-gray-900">{formatDate(event.date)}</div>
-                      <div className="text-sm text-gray-500">{event.time}</div>
+                    <td className="px-6 py-4 text-sm">
+                      <div>{formatDate(event.date)}</div>
+                      <div className="text-gray-500">{event.time}</div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">{event.description}</div>
-                      {event.type === 'Earnings' && event.expectedEPS && event.previousEPS && (
-                        <div className="text-sm text-gray-500 mt-1">
-                          Expected: ₹{event.expectedEPS} | Previous: ₹{event.previousEPS} | 
-                          Growth: {((event.expectedEPS - event.previousEPS) / event.previousEPS * 100).toFixed(1)}%
-                        </div>
-                      )}
-                      {event.type === 'Dividend' && event.dividend && (
-                        <div className="text-sm text-gray-500 mt-1">
-                          Dividend: ₹{event.dividend} per share
-                          {event.exDate && ` | Ex-Date: ${formatDate(event.exDate)}`}
-                        </div>
-                      )}
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      {event.description}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getImportanceColor(event.importance)}`}>
+                    <td className="px-6 py-4 text-sm">
+                      <span
+                        className={`px-2 py-1 rounded-full ${getImportanceColor(
+                          event.importance
+                        )}`}
+                      >
                         {event.importance}
                       </span>
                     </td>
-
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center space-x-2">
+                    <td className="px-6 py-4 text-sm">
+                      <div className="flex space-x-2">
                         <button
                           onClick={() => handleEdit(event)}
-                          className="p-1 text-blue-600 hover:text-blue-800 transition-colors"
-                          title="Edit"
+                          className="text-blue-600 hover:text-blue-800"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleDelete(event.id)}
-                          className="p-1 text-red-600 hover:text-red-800 transition-colors"
-                          title="Delete"
+                          onClick={() => handleDelete(event._id)}
+                          className="text-red-600 hover:text-red-800"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
-                        <button
-                          className="p-1 text-green-600 hover:text-green-800 transition-colors"
-                          title="View"
-                        >
+                        <button className="text-green-600 hover:text-green-800">
                           <Eye className="w-4 h-4" />
                         </button>
                       </div>
@@ -354,212 +277,120 @@ export default function AdminResults() {
           </div>
         </div>
 
-        {/* Edit Modal */}
-        {editingEvent && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl p-6 w-full max-w-2xl mx-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Edit Event</h3>
-                <button onClick={handleCancel} className="text-gray-500 hover:text-gray-700">
-                  <X className="w-5 h-5" />
+        {/* Add/Edit Modal */}
+        {(showAddForm || editingId) && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div className="bg-white rounded-xl p-6 w-full max-w-2xl">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">
+                  {editingId ? "Edit Result" : "Add Result"}
+                </h3>
+                <button onClick={handleCancel}>
+                  <X className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                    <select
-                      value={editingEvent.type}
-                      onChange={(e) => setEditingEvent({...editingEvent, type: e.target.value as any})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="Earnings">Earnings</option>
-                      <option value="Dividend">Dividend</option>
-                      <option value="Event">Event</option>
-                    </select>
-                  </div>
-
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
-                    <input
-                      type="text"
-                      value={editingEvent.company}
-                      onChange={(e) => setEditingEvent({...editingEvent, company: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Symbol</label>
-                    <input
-                      type="text"
-                      value={editingEvent.symbol}
-                      onChange={(e) => setEditingEvent({...editingEvent, symbol: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                    <input
-                      type="date"
-                      value={editingEvent.date}
-                      onChange={(e) => setEditingEvent({...editingEvent, date: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                    <input
-                      type="text"
-                      value={editingEvent.time}
-                      onChange={(e) => setEditingEvent({...editingEvent, time: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Type</label>
+                  <select
+                    name="type"
+                    value={formData.type}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border rounded-lg"
+                  >
+                    <option value="earnings">Earnings</option>
+                    <option value="dividend">Dividend</option>
+                    <option value="event">Event</option>
+                  </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                  <textarea
-                    value={editingEvent.description || ''}
-                    onChange={(e) => setEditingEvent({...editingEvent, description: e.target.value})}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex justify-end space-x-3">
-                  <button
-                    onClick={handleCancel}
-                    className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                  <label className="text-sm font-medium">Importance</label>
+                  <select
+                    name="importance"
+                    value={formData.importance}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border rounded-lg"
                   >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSave}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
-                  >
-                    <Save className="w-4 h-4" />
-                    <span>Save Changes</span>
-                  </button>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                  </select>
                 </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <input
+                  name="companyName"
+                  placeholder="Company Name"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                  className="px-3 py-2 border rounded-lg"
+                />
+                <input
+                  name="symbol"
+                  placeholder="Symbol"
+                  value={formData.symbol}
+                  onChange={handleChange}
+                  className="px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <input
+                  type="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  className="px-3 py-2 border rounded-lg"
+                />
+                <input
+                  name="time"
+                  placeholder="Time"
+                  value={formData.time}
+                  onChange={handleChange}
+                  className="px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <textarea
+                name="description"
+                placeholder="Description"
+                rows={3}
+                value={formData.description}
+                onChange={handleChange}
+                className="mt-4 w-full px-3 py-2 border rounded-lg"
+              ></textarea>
+              <div className="flex justify-end mt-4 space-x-3">
+                <button
+                  onClick={handleCancel}
+                  className="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  {editingId ? <><Save className="w-4 h-4 inline mr-1" /> Save</> : <><Plus className="w-4 h-4 inline mr-1" /> Add</>}
+                </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* Add Event Modal */}
-        {showAddForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl p-6 w-full max-w-2xl mx-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Add New Event</h3>
-                <button onClick={handleCancel} className="text-gray-500 hover:text-gray-700">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      <option value="Earnings">Earnings</option>
-                      <option value="Dividend">Dividend</option>
-                      <option value="Event">Event</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Importance</label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      <option value="High">High</option>
-                      <option value="Medium">Medium</option>
-                      <option value="Low">Low</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
-                    <input
-                      type="text"
-                      placeholder="Company name"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Symbol</label>
-                    <input
-                      type="text"
-                      placeholder="Stock symbol"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                    <input
-                      type="date"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                    <input
-                      type="text"
-                      placeholder="e.g., After Market, 10:00 AM"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                  <textarea
-                    placeholder="Event description"
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex justify-end space-x-3">
-                  <button
-                    onClick={handleCancel}
-                    className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Add Event</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Admin Notice */}
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex">
-            <div className="flex-shrink-0">
-              <AlertTriangle className="h-5 w-5 text-blue-400" />
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-blue-800">Admin Guidelines</h3>
-              <div className="mt-2 text-sm text-blue-700">
-                <ul className="list-disc list-inside space-y-1">
-                  <li>Verify all information before publishing events</li>
-                  <li>Use appropriate importance levels for better user experience</li>
-                  <li>Keep descriptions clear and informative</li>
-                  <li>Schedule events in advance for better planning</li>
-                </ul>
-              </div>
+            <AlertTriangle className="w-5 h-5 text-blue-500 mr-2" />
+            <div>
+              <h4 className="text-sm font-medium text-blue-800">Admin Guidelines</h4>
+              <ul className="mt-2 text-sm text-blue-700 list-disc list-inside">
+                <li>Verify all event details before saving</li>
+                <li>Use clear descriptions</li>
+                <li>Use appropriate importance levels</li>
+              </ul>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-} 
+};
+
+export default ResultsAdminPage;

@@ -282,9 +282,7 @@ export default function AdminMarketNews() {
                         src={item.image} 
                         alt={item.title}
                         className="w-12 h-12 rounded-lg object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = '/images/placeholder.jpg';
-                        }}
+                      
                       />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

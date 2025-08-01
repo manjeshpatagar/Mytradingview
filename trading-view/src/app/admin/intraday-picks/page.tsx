@@ -1,18 +1,14 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Clock, TrendingUp, DollarSign, Target, ArrowRight, Edit, Trash2, Plus, X, Save } from 'lucide-react';
+import {
+  getIntradayPicks,
+  addIntradayPick,
+  updateIntradayPick,
+  deleteIntradayPick,
+} from '@/services/intradayService';
 
-type PickType = {
-  id: number;
-  date: string;
-  symbol: string;
-  price: number;
-  buyAbove: number;
-  buyTarget: number;
-  sellBelow: number;
-  sellTarget: number;
-};
 
 export default function AdminIntradayPicks() {
   const today = new Date();
@@ -24,49 +20,8 @@ export default function AdminIntradayPicks() {
   });
 
   const [selectedDate, setSelectedDate] = useState(formatDate(today));
-  const [picks, setPicks] = useState<PickType[]>([
-    {
-      id: 1,
-      date: formatDate(today),
-      symbol: 'TATA MOTORS',
-      price: 950,
-      buyAbove: 960,
-      buyTarget: 985,
-      sellBelow: 945,
-      sellTarget: 920,
-    },
-    {
-      id: 2,
-      date: formatDate(today),
-      symbol: 'RELIANCE',
-      price: 2850,
-      buyAbove: 2875,
-      buyTarget: 2920,
-      sellBelow: 2830,
-      sellTarget: 2785,
-    },
-    {
-      id: 3,
-      date: formatDate(new Date(today.getTime() - 1 * 86400000)),
-      symbol: 'INFY',
-      price: 1500,
-      buyAbove: 1600,
-      buyTarget: 1625,
-      sellBelow: 1585,
-      sellTarget: 1560,
-    },
-    {
-      id: 4,
-      date: formatDate(new Date(today.getTime() - 2 * 86400000)),
-      symbol: 'HDFC BANK',
-      price: 1650,
-      buyAbove: 1650,
-      buyTarget: 1680,
-      sellBelow: 1620,
-      sellTarget: 1595,
-    },
-  ]);
-  const [editingPick, setEditingPick] = useState<PickType | null>(null);
+  const [picks, setPicks] = useState<any[]>([]);
+  const [editingPick, setEditingPick] = useState<any | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newPick, setNewPick] = useState({
     date: selectedDate,
@@ -78,67 +33,94 @@ export default function AdminIntradayPicks() {
     sellTarget: '',
   });
 
-  const filteredPicks = picks.filter(p => p.date === selectedDate);
+  useEffect(() => {
+    fetchPicks();
+  }, [selectedDate]);
 
-  const stats = [
-    {
-      label: 'Total Picks',
-      value: picks.length.toString(),
-      icon: Target,
-      color: 'text-blue-600',
-    },
-    {
-      label: 'Success Rate',
-      value: '87%',
-      icon: TrendingUp,
-      color: 'text-green-600',
-    },
-    {
-      label: 'Avg Return',
-      value: '+4.2%',
-      icon: DollarSign,
-      color: 'text-purple-600',
-    },
-    {
-      label: 'Active Signals',
-      value: filteredPicks.length.toString(),
-      icon: Clock,
-      color: 'text-orange-600',
-    },
-  ];
-
-  // CRUD Handlers
-  const handleEdit = (pick: PickType) => setEditingPick({ ...pick });
-  const handleDelete = (id: number) => setPicks(picks.filter(p => p.id !== id));
-  const handleSave = () => {
-    setPicks(picks.map(p => (p.id === editingPick?.id ? editingPick : p)));
-    setEditingPick(null);
+  const fetchPicks = async () => {
+    try {
+      const res = await getIntradayPicks();
+      if (!res.data) {
+        console.error('No data returned from API');
+        return;
+      }
+      const allPicks = res.data.map((p: any) => ({
+        _id: p._id,
+        symbol: p.stockSymbol,
+        price: p.price,
+        date: p.date.split('T')[0], // convert ISO date to YYYY-MM-DD
+        buyAbove: p.buyAbove,
+        buyTarget: p.buyTarget,
+        sellBelow: p.sellBelow,
+        sellTarget: p.sellTarget,
+      }));
+      setPicks(allPicks);
+    } catch (err) {
+      console.error('Failed to fetch picks', err);
+    }
   };
+
+  const handleEdit = (pick: any) => setEditingPick({ ...pick });
+
+  const handleDelete = async (id?: string) => {
+    if (!id) return;
+    try {
+      await deleteIntradayPick(id);
+      fetchPicks();
+    } catch (err) {
+      console.error('Delete failed', err);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!editingPick?._id) return;
+    try {
+      await updateIntradayPick(editingPick._id, {
+        stockSymbol: editingPick.symbol,
+        price: editingPick.price,
+        date: editingPick.date,
+        buyAbove: editingPick.buyAbove,
+        buyTarget: editingPick.buyTarget,
+        sellBelow: editingPick.sellBelow,
+        sellTarget: editingPick.sellTarget,
+      });
+      setEditingPick(null);
+      fetchPicks();
+    } catch (err) {
+      console.error('Update failed', err);
+    }
+  };
+
   const handleCancel = () => setEditingPick(null);
-  const handleAdd = () => {
-    setPicks([
-      ...picks,
-      {
-        ...newPick,
-        id: Date.now(),
+
+  const handleAdd = async () => {
+    try {
+      await addIntradayPick({
+        stockSymbol: newPick.symbol,
         price: Number(newPick.price),
+        date: newPick.date,
         buyAbove: Number(newPick.buyAbove),
         buyTarget: Number(newPick.buyTarget),
         sellBelow: Number(newPick.sellBelow),
         sellTarget: Number(newPick.sellTarget),
-      },
-    ]);
-    setShowAddForm(false);
-    setNewPick({
-      date: selectedDate,
-      symbol: '',
-      price: '',
-      buyAbove: '',
-      buyTarget: '',
-      sellBelow: '',
-      sellTarget: '',
-    });
+      });
+      setShowAddForm(false);
+      setNewPick({
+        date: selectedDate,
+        symbol: '',
+        price: '',
+        buyAbove: '',
+        buyTarget: '',
+        sellBelow: '',
+        sellTarget: '',
+      });
+      fetchPicks();
+    } catch (err) {
+      console.error('Add failed', err);
+    }
   };
+
+  const filteredPicks = picks.filter(p => p.date === selectedDate);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -161,29 +143,7 @@ export default function AdminIntradayPicks() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">{stat.label}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                </div>
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${stat.color.replace('text-', 'bg-').replace('-600', '-100')}`}>
-                  <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
+    
         {/* Date Selector */}
         <div className="flex flex-wrap gap-2 mb-6">
           {last7Days.map(date => (
@@ -213,7 +173,7 @@ export default function AdminIntradayPicks() {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-4 text-left text-lg font-medium text-gray-700 uppercase">Stock</th>
+                  <th className="px-6 py-4 text-left text-lg font-medium text-gray-700 uppercase">Stock Symbol</th>
                   <th className="px-6 py-4 text-left text-lg font-medium text-blue-600 uppercase">Price</th>
                   <th className="px-6 py-4 text-left text-lg font-medium text-green-700 uppercase">Buy Above</th>
                   <th className="px-6 py-4 text-left text-lg font-medium text-green-700 uppercase">Buy Target</th>
@@ -226,7 +186,7 @@ export default function AdminIntradayPicks() {
                 {filteredPicks.length > 0 ? (
                   filteredPicks.map((pick, index) => (
                     <motion.tr
-                      key={pick.id}
+                      key={pick._id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -242,7 +202,7 @@ export default function AdminIntradayPicks() {
                         <button className="text-green-600 hover:text-green-900 mr-2" onClick={() => handleEdit(pick)} title="Edit">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button className="text-red-600 hover:text-red-900" onClick={() => handleDelete(pick.id)} title="Delete">
+                        <button className="text-red-600 hover:text-red-900" onClick={() => handleDelete(pick._id)} title="Delete">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </td>
@@ -444,4 +404,4 @@ export default function AdminIntradayPicks() {
       </div>
     </div>
   );
-} 
+}
