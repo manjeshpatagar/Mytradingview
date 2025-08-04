@@ -7,25 +7,31 @@ const intradayResultsSchema = new mongoose.Schema(
       required: [true, "Stock name is required"],
       trim: true,
     },
-    byPrice: {
+    entry: {
       type: Number,
       required: [true, "By price is required"],
       min: 0,
     },
-    highOfDay: {
+    exit: {
       type: Number,
       required: [true, "High of day price is required"],
       min: 0,
     },
-    gain: {
+    return: {
       type: Number,
       required: [true, "Buy target is required"],
       min: 0,
     },
-    type: {
+    status: {
       type: String,
       required: [true, "Type is required"],
-      enum: ["strong breakout", "strong breakdown", "short sell breakout"],
+      enum: ["success"],
+      lowercase: true,
+    },
+    profit: {
+      type: String,
+      required: [true, "Type is required"],
+      enum: ["bye side", "sell side"],
       lowercase: true,
     },
     isActive: {
