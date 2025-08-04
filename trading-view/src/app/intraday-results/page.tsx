@@ -52,19 +52,20 @@ export default function IntradayResults() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <Activity className="w-6 h-6 text-white" />
+      <div className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center space-x-3 mb-2">
+            <div className="w-9 h-9 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <Activity className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Performance Analytics</h1>
-              <p className="text-gray-600">Historical performance data and trading results</p>
+              <h1 className="text-xl font-bold text-gray-900">Performance Analytics</h1>
+              <p className="text-sm text-gray-600">Historical performance data and trading results</p>
             </div>
           </div>
         </div>
       </div>
+
 
       <div className="max-w-7xl mx-auto px-6 py-8">
 
@@ -111,9 +112,8 @@ export default function IntradayResults() {
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            stock.status === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                          }`}>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${stock.status === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                            }`}>
                             {stock.status === 'success' ? (
                               <TrendingUp className="w-3 h-3 mr-1" />
                             ) : (
@@ -142,12 +142,11 @@ export default function IntradayResults() {
           </div>
         </div>
 
-        {/* Disclaimer */}
-        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-md shadow-sm mt-6">
-          <div className="flex">
-            <Info className="w-5 h-5 mr-2 mt-1 text-yellow-500" />
+        <div className="fixed bottom-0 left-0 w-full z-50 bg-yellow-100 border-t-4 border-yellow-500 text-yellow-800 px-6 py-4 shadow-md">
+          <div className="max-w-6xl mx-auto flex">
+            <Info className="w-5 h-5 mr-3 mt-1 text-yellow-500" />
             <div className="text-sm">
-              <p className="font-semibold">Disclaimer:</p>
+              <p className="font-semibold mb-1">Disclaimer:</p>
               <p>
                 The "Buy Above" or "Sell Below" levels shared are for educational purposes only. Once the price crosses the level, you may consider entering — but we do not guarantee target achievement.
                 <br />
@@ -159,6 +158,7 @@ export default function IntradayResults() {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

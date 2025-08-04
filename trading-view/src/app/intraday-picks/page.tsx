@@ -36,7 +36,7 @@ export default function IntradayPicks() {
       try {
         const response = await getIntradayPicks();
         console.log("Raw API Response:", response);
-        
+
         let picksArray = [];
         // Handle both possible API response structures
         if (response.data && Array.isArray(response.data.data)) {
@@ -91,20 +91,23 @@ export default function IntradayPicks() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Intraday Trading Picks</h1>
-              <p className="text-gray-600">Real-time trading signals for the past 7 days</p>
+              <h1 className="text-xl font-semibold text-gray-900 mb-1">Intraday Trading Picks</h1>
+              <p className="text-sm text-gray-600">Real-time trading signals for the past 7 days</p>
             </div>
-            <div className="flex items-center space-x-2 text-sm text-gray-500">
+            <div className="flex items-center space-x-2 text-xs text-gray-500">
               <Clock className="w-4 h-4" />
-              <span>Last updated: {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} IST</span>
+              <span>
+                Last updated: {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} IST
+              </span>
             </div>
           </div>
         </div>
       </div>
+
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Date Selector */}
@@ -115,11 +118,10 @@ export default function IntradayPicks() {
               <button
                 key={date}
                 onClick={() => setSelectedDate(date)}
-                className={`px-4 py-2 rounded-full text-sm font-medium border ${
-                  selectedDate === date
+                className={`px-4 py-2 rounded-full text-sm font-medium border ${selectedDate === date
                     ? 'bg-blue-600 text-white'
                     : 'bg-white text-gray-700 hover:bg-gray-100'
-                }`}
+                  }`}
               >
                 {isToday ? 'Today' : date}
               </button>
@@ -187,14 +189,18 @@ export default function IntradayPicks() {
         </div>
 
         {/* Disclaimer */}
-        <div className="p-4 text-md text-gray-600 bg-yellow-100 border border-yellow-300 rounded mt-6">
-          <strong>Disclaimer:</strong> The "Buy Above" or "Sell Below" levels are provided for educational purposes only.
-          When a stock crosses the Buy Above or Sell Below price, it's a potential trade opportunity — but hitting the full target is not guaranteed.
-          We suggest booking 2–3% profit if momentum weakens. Use stop-loss and risk management. We are not SEBI-registered advisors.
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-yellow-100 border-t border-yellow-300 text-gray-800 text-sm p-4 shadow-md">
+          <div className="max-w-7xl mx-auto">
+            <p>
+              <strong>Disclaimer:</strong> The "Buy Above" or "Sell Below" levels are provided for educational purposes only.
+              When a stock crosses the Buy Above or Sell Below price, it's a potential trade opportunity — but hitting the full target is not guaranteed.
+              We suggest booking <strong>2–3% profit</strong> if momentum weakens. Use stop-loss and risk management.
+              We are <strong>not SEBI-registered advisors</strong>.
+            </p>
+          </div>
         </div>
-
         {/* Premium CTA */}
-        <div className="mt-12 text-center">
+        {/* <div className="mt-12 text-center">
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white shadow-lg">
             <h3 className="text-2xl font-bold mb-4">Upgrade for Daily Accurate Picks</h3>
             <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
@@ -204,7 +210,7 @@ export default function IntradayPicks() {
               Get Premium Access <ArrowRight className="w-5 h-5 ml-2 inline" />
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
