@@ -29,6 +29,10 @@ export default function AdminDashboard() {
     { title: 'Stock News', value: '12', icon: TrendingUp, color: 'bg-green-500' },
     { title: 'Market News', value: '8', icon: BarChart3, color: 'bg-purple-500' },
     { title: 'Users', value: '1,234', icon: Users, color: 'bg-orange-500' },
+    { title: 'Results', value: '56', icon: DollarSign, color: 'bg-red-500' },
+    { title: 'Intraday Picks', value: '15', icon: Target, color: 'bg-yellow-500' },
+    
+
   ];
 
   const recentNews = [
@@ -47,7 +51,11 @@ export default function AdminDashboard() {
     { id: 'intraday-picks', label: 'Intraday Picks', icon: Target, href: '/admin/intraday-picks' },
     { id: 'users', label: 'User Management', icon: Users, href: '/admin/users' },
     { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/settings' },
-  ];
+    { id: 'admin-intraday-results', label: 'Intraday results', icon: Target, href: '/admin/intraday-result' },
+    
+
+    
+  ];    
 
   return (
     <div className="min-h-screen bg-gray-50">

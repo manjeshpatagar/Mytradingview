@@ -12,54 +12,7 @@ import {
 } from 'lucide-react';
 
 export default function IntradayResults() {
-  const performanceData = [
-    {
-      date: '2024-01-24',
-      totalPicks: 8,
-      successful: 7,
-      failed: 1,
-      successRate: 87.5,
-      avgReturn: 3.2,
-      totalReturn: 25.6
-    },
-    {
-      date: '2024-01-23',
-      totalPicks: 6,
-      successful: 5,
-      failed: 1,
-      successRate: 83.3,
-      avgReturn: 2.8,
-      totalReturn: 16.8
-    },
-    {
-      date: '2024-01-22',
-      totalPicks: 7,
-      successful: 6,
-      failed: 1,
-      successRate: 85.7,
-      avgReturn: 3.5,
-      totalReturn: 24.5
-    },
-    {
-      date: '2024-01-21',
-      totalPicks: 5,
-      successful: 4,
-      failed: 1,
-      successRate: 80.0,
-      avgReturn: 2.9,
-      totalReturn: 14.5
-    },
-    {
-      date: '2024-01-20',
-      totalPicks: 9,
-      successful: 8,
-      failed: 1,
-      successRate: 88.9,
-      avgReturn: 3.8,
-      totalReturn: 34.2
-    }
-  ];
-
+  
   const topPerformers = [
     {
       symbol: 'RELIANCE',
@@ -79,43 +32,7 @@ export default function IntradayResults() {
       status: 'Success',
       profit: 'Sell Side'
     },
-    {
-      symbol: 'TCS',
-      company: 'Tata Consultancy Services',
-      entry: 3850,
-      exit: 3950,
-      return: 2.6,
-      status: 'Success',
-      profit: 'Buy Side'
-    },
-    {
-      symbol: 'HDFC',
-      company: 'HDFC Bank',
-      entry: 1720,
-      exit: 1620,
-      return: 3.49,
-      status: 'Success',
-      profit: 'Sell Side'
-    },
-   
   ];
-
-  const stats = [
-    { title: 'Total Picks', value: '35', change: '+12%', icon: Activity },
-    { title: 'Success Rate', value: '85.7%', change: '+2.3%', icon: TrendingUp },
-    { title: 'Avg Return', value: '3.2%', change: '+0.5%', icon: DollarSign },
-    { title: 'Total Return', value: '₹115.6', change: '+18.2%', icon: BarChart3 }
-
-  ];
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -231,33 +148,6 @@ export default function IntradayResults() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Return</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {performanceData.map((day, index) => (
-                  <motion.tr
-                    key={day.date}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{formatDate(day.date)}</td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{day.totalPicks}</td>
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                          <div
-                            className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full"
-                            style={{ width: `${day.successRate}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-sm text-gray-900">{day.successRate}%</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{day.avgReturn}%</td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm font-semibold text-green-600">₹{day.totalReturn}</td>
-                  </motion.tr>
-                ))}
-              </tbody>
             </table>
           </div>
         </div>

@@ -55,7 +55,7 @@ export default function Login() {
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center space-x-2 mb-6">
               <BarChart3 className="w-8 h-8 text-blue-600" />
-              <span className="text-2xl font-bold text-gray-900">TradeView Pro</span>
+              <span className="text-2xl font-bold text-gray-900">Trade Zone</span>
             </Link>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
             <p className="text-gray-600">Sign in to your trading account</p>

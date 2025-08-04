@@ -1,94 +1,83 @@
 'use client';
 
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Globe, Clock, TrendingUp, TrendingDown, ExternalLink } from 'lucide-react';
+import { getAllMarketNews } from '@/services/marketNewsService';
 
-export default function MarketNews() {
-  const news = [
-    {
-      id: 1,
-      title: 'Sensex Hits New All-Time High Amid Strong Global Cues',
-      category: 'Markets',
-      summary: 'Indian markets surge to record levels as global risk sentiment improves and foreign investors continue buying.',
-      sentiment: 'Positive',
-      time: '1 hour ago',
-      url: '#',
-      image: '/images/sensex-high.jpg'
-    },
-    {
-      id: 2,
-      title: 'RBI Maintains Repo Rate at 6.5% in Latest Policy Meet',
-      category: 'Policy',
-      summary: 'Reserve Bank of India keeps interest rates unchanged while maintaining accommodative stance for growth.',
-      sentiment: 'Neutral',
-      time: '3 hours ago',
-      url: '#',
-      image: '/images/rbi-policy.jpg'
-    },
-    {
-      id: 3,
-      title: 'Global Oil Prices Fall on Demand Concerns',
-      category: 'Commodities',
-      summary: 'Crude oil prices decline as concerns over global economic slowdown weigh on demand outlook.',
-      sentiment: 'Negative',
-      time: '5 hours ago',
-      url: '#',
-      image: '/images/oil-prices.jpg'
-    },
-    {
-      id: 4,
-      title: 'US Fed Signals Potential Rate Cuts in 2024',
-      category: 'Global',
-      summary: 'Federal Reserve officials indicate possible interest rate reductions as inflation shows signs of cooling.',
-      sentiment: 'Positive',
-      time: '7 hours ago',
-      url: '#',
-      image: '/images/fed-rates.jpg'
-    },
-    {
-      id: 5,
-      title: 'Rupee Strengthens Against Dollar',
-      category: 'Forex',
-      summary: 'Indian rupee gains ground against US dollar supported by strong foreign fund inflows.',
-      sentiment: 'Positive',
-      time: '9 hours ago',
-      url: '#',
-      image: '/images/rupee-dollar.jpg'
-    },
-    {
-      id: 6,
-      title: 'Gold Prices Hit Record High',
-      category: 'Commodities',
-      summary: 'Gold prices surge to all-time high as investors seek safe haven amid market volatility.',
-      sentiment: 'Positive',
-      time: '11 hours ago',
-      url: '#',
-      image: '/images/gold-prices.jpg'
-    }
-  ];
+const getSentimentColor = (sentiment: string) => {
+  switch (sentiment) {
+    case 'Positive': return 'bg-green-100 text-green-800';
+    case 'Negative': return 'bg-red-100 text-red-800';
+    case 'Neutral': return 'bg-gray-100 text-gray-800';
+    default: return 'bg-gray-100 text-gray-800';
+  }
+};
 
-  const getSentimentColor = (sentiment: string) => {
-    switch (sentiment) {
-      case 'Positive': return 'bg-green-100 text-green-800';
-      case 'Negative': return 'bg-red-100 text-red-800';
-      case 'Neutral': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+const getCategoryColor = (category: string) => {
+  switch (category) {
+    case 'Markets': return 'bg-blue-100 text-blue-800';
+    case 'Policy': return 'bg-purple-100 text-purple-800';
+    case 'Commodities': return 'bg-yellow-100 text-yellow-800';
+    case 'Global': return 'bg-indigo-100 text-indigo-800';
+    case 'Forex': return 'bg-green-100 text-green-800';
+    default: return 'bg-gray-100 text-gray-800';
+  }
+};
+
+const formatTimeAgo = (dateString: string) => {
+  const now = new Date();
+  const then = new Date(dateString);
+  const seconds = Math.floor((now.getTime() - then.getTime()) / 1000);
+
+  let interval = seconds / 31536000;
+  if (interval > 1) return `${Math.floor(interval)} years ago`;
+  interval = seconds / 2592000;
+  if (interval > 1) return `${Math.floor(interval)} months ago`;
+  interval = seconds / 86400;
+  if (interval > 1) return `${Math.floor(interval)} days ago`;
+  interval = seconds / 3600;
+  if (interval > 1) return `${Math.floor(interval)} hours ago`;
+  interval = seconds / 60;
+  if (interval > 1) return `${Math.floor(interval)} minutes ago`;
+  return `${Math.floor(seconds)} seconds ago`;
+};
+
+export default function MarketNewsPage() {
+  const [news, setNews] = useState<any[]>([]);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadNews = async (isInitial = false) => {
+    try {
+      if (isInitial) setInitialLoading(true);
+      const response = await getAllMarketNews();
+      const articles = response.data || [];
+
+      const today = new Date().toDateString();
+      const todayNews = articles.filter((item: any) =>
+        new Date(item.createdAt).toDateString() === today
+      );
+
+      setNews(todayNews);
+    } catch (err) {
+      console.error('Error loading news:', err);
+      setError('Unable to load market news.');
+    } finally {
+      if (isInitial) setInitialLoading(false);
     }
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'Markets': return 'bg-blue-100 text-blue-800';
-      case 'Policy': return 'bg-purple-100 text-purple-800';
-      case 'Commodities': return 'bg-yellow-100 text-yellow-800';
-      case 'Global': return 'bg-indigo-100 text-indigo-800';
-      case 'Forex': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
+  useEffect(() => {
+    loadNews(true); // Load initially with loader
+    const interval = setInterval(() => {
+      loadNews(false); // Silent background refresh
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 font-sans">
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-8">
@@ -98,105 +87,101 @@ export default function MarketNews() {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Market News</h1>
-              <p className="text-gray-600">Global market headlines and economic updates</p>
+              <p className="text-gray-600">Auto-refreshed every 5 seconds • Today’s news only</p>
             </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* News Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {news.map((item, index) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
-            >
-              <div className="relative">
-                <img 
-                  src={item.image} 
-                  alt={item.title}
-                  className="w-full h-48 object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = '/images/placeholder.jpg';
-                  }}
-                />
-              </div>
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-2">
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(item.category)}`}>
-                      {item.category}
-                    </span>
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getSentimentColor(item.sentiment)}`}>
-                      {item.sentiment === 'Positive' ? (
-                        <TrendingUp className="w-3 h-3 mr-1" />
-                      ) : item.sentiment === 'Negative' ? (
-                        <TrendingDown className="w-3 h-3 mr-1" />
-                      ) : null}
-                      {item.sentiment}
-                    </span>
-                  </div>
-              
-                </div>
+        {initialLoading ? (
+          <div className="flex justify-center items-center min-h-[50vh]">
+            <p className="text-gray-600">Loading market news...</p>
+          </div>
+        ) : error ? (
+          <div className="flex justify-center items-center min-h-[50vh]">
+            <p className="text-red-600">{error}</p>
+          </div>
+        ) : news.length > 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {news.map((item, index) => {
+              const sentiment = item.sentiment?.[0]?.toUpperCase() + item.sentiment?.slice(1).toLowerCase();
+              const category = item.category?.[0]?.toUpperCase() + item.category?.slice(1).toLowerCase();
 
-                <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">
-                  {item.title}
-                </h3>
-
-                <p className="text-gray-600 mb-4 line-clamp-3">
-                  {item.summary}
-                </p>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4 text-sm text-gray-500">
-                    <div className="flex items-center">
-                      <Clock className="w-4 h-4 mr-1" />
-                      {item.time}
+              return (
+                <motion.div
+                  key={item._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
+                >
+                  <img
+                    src={item.image || 'https://via.placeholder.com/400x200.png?text=Market+News'}
+                    alt={item.title}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center space-x-2">
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(category)}`}>
+                          {category}
+                        </span>
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getSentimentColor(sentiment)}`}>
+                          {sentiment === 'Positive' ? (
+                            <TrendingUp className="w-3 h-3 mr-1" />
+                          ) : sentiment === 'Negative' ? (
+                            <TrendingDown className="w-3 h-3 mr-1" />
+                          ) : null}
+                          {sentiment}
+                        </span>
+                      </div>
                     </div>
-                   
+
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">{item.title}</h3>
+
+                    <p className="text-gray-600 mb-4 line-clamp-3">{item.summary}</p>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4 text-sm text-gray-500">
+                        <Clock className="w-4 h-4 mr-1" />
+                        {formatTimeAgo(item.createdAt)}
+                      </div>
+                      {item.url && (
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm"
+                        >
+                          Read More
+                          <ExternalLink className="w-4 h-4 ml-1" />
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  <a
-                    href={item.url}
-                    className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm"
-                  >
-                    Read More
-                    <ExternalLink className="w-4 h-4 ml-1" />
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center text-gray-500 py-10 min-h-[50vh]">
+            <p>No news available for today.</p>
+          </div>
+        )}
 
-        {/* Load More Button */}
-        <div className="mt-8 text-center">
-          <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300">
-            Load More News
-          </button>
-        </div>
-
-        {/* Disclaimer */}
         <div className="mt-8 bg-gray-50 border border-gray-200 rounded-lg p-4">
           <div className="flex">
-            <div className="flex-shrink-0">
-              <Globe className="h-5 w-5 text-gray-400" />
-            </div>
+            <Globe className="h-5 w-5 text-gray-400" />
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-gray-800">Market News Disclaimer</h3>
-              <div className="mt-2 text-sm text-gray-600">
-                <p>
-                  Market news is sourced from various financial publications. This information is for
-                  educational purposes only and should not be considered as investment advice.
-                </p>
-              </div>
+              <h3 className="text-sm font-medium text-gray-800">Market News Auto-Refresh</h3>
+              <p className="text-sm text-gray-600 mt-1">
+                This page silently refreshes every 5 seconds without blinking or loading.
+              </p>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-} 
+}

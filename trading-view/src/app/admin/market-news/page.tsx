@@ -1,3 +1,4 @@
+
 'use client';
 
 import { motion } from 'framer-motion';
@@ -6,7 +7,6 @@ import {
   Clock, 
   TrendingUp, 
   TrendingDown, 
-  ExternalLink,
   Plus, 
   Edit, 
   Trash2, 
@@ -16,119 +16,85 @@ import {
   Filter,
   Search
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import {
+  getAllMarketNews,
+  createMarketNews,
+  updateMarketNews,
+  deleteMarketNews,
+} from "../../../services/marketNewsService";
 
 type NewsItem = {
-  id: string;
+  _id: string; // Changed from 'id' to '_id' to match MongoDB's default field
   title: string;
   category: string;
   summary: string;
-  sentiment: 'Positive' | 'Negative' | 'Neutral';
-  time: string;
+  sentiment: 'positive' | 'negative' | 'neutral'; // Changed to lowercase to match model
+  createdAt: string; // Use createdAt from the database
   url: string;
   image: string;
 };
 
-export default function AdminMarketNews() {
-  const [news, setNews] = useState<NewsItem[]>([
-    {
-      id: '1',
-      title: 'Sensex Hits New All-Time High Amid Strong Global Cues',
-      category: 'Markets',
-      summary: 'Indian markets surge to record levels as global risk sentiment improves and foreign investors continue buying.',
-      sentiment: 'Positive',
-      time: '1 hour ago',
-      url: '#',
-      image: '/images/sensex-high.jpg'
-    },
-    {
-      id: '2',
-      title: 'RBI Maintains Repo Rate at 6.5% in Latest Policy Meet',
-      category: 'Policy',
-      summary: 'Reserve Bank of India keeps interest rates unchanged while maintaining accommodative stance for growth.',
-      sentiment: 'Neutral',
-      time: '3 hours ago',
-      url: '#',
-      image: '/images/rbi-policy.jpg'
-    },
-    {
-      id: '3',
-      title: 'Global Oil Prices Fall on Demand Concerns',
-      category: 'Commodities',
-      summary: 'Crude oil prices decline as concerns over global economic slowdown weigh on demand outlook.',
-      sentiment: 'Negative',
-      time: '5 hours ago',
-      url: '#',
-      image: '/images/oil-prices.jpg'
-    },
-    {
-      id: '4',
-      title: 'US Fed Signals Potential Rate Cuts in 2024',
-      category: 'Global',
-      summary: 'Federal Reserve officials indicate possible interest rate reductions as inflation shows signs of cooling.',
-      sentiment: 'Positive',
-      time: '7 hours ago',
-      url: '#',
-      image: '/images/fed-rates.jpg'
-    },
-    {
-      id: '5',
-      title: 'Rupee Strengthens Against Dollar',
-      category: 'Forex',
-      summary: 'Indian rupee gains ground against US dollar supported by strong foreign fund inflows.',
-      sentiment: 'Positive',
-      time: '9 hours ago',
-      url: '#',
-      image: '/images/rupee-dollar.jpg'
-    },
-    {
-      id: '6',
-      title: 'Gold Prices Hit Record High',
-      category: 'Commodities',
-      summary: 'Gold prices surge to all-time high as investors seek safe haven amid market volatility.',
-      sentiment: 'Positive',
-      time: '11 hours ago',
-      url: '#',
-      image: '/images/gold-prices.jpg'
-    }
-  ]);
+// Placeholder image to be used for non-existent images
+const placeholderImage = '/images/placeholder.jpg';
 
+export default function AdminMarketNews() {
+  const [news, setNews] = useState<NewsItem[]>([]);
   const [editingNews, setEditingNews] = useState<NewsItem | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [filterCategory, setFilterCategory] = useState<string>('All');
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch news data on component mount
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const response = await getAllMarketNews();
+        // Assuming the API returns an array of news items
+        setNews(response.data);
+      } catch (err) {
+        console.error("Failed to fetch market news:", err);
+        setError("Failed to load news. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNews();
+  }, []); // Empty dependency array means this runs once on mount
 
   const stats = [
-    { title: 'Total News', value: news.length.toString(), change: '+3', icon: Globe },
-    { title: 'Positive', value: news.filter(n => n.sentiment === 'Positive').length.toString(), change: '+2', icon: TrendingUp },
-    { title: 'Negative', value: news.filter(n => n.sentiment === 'Negative').length.toString(), change: '+1', icon: TrendingDown },
-    { title: 'Neutral', value: news.filter(n => n.sentiment === 'Neutral').length.toString(), change: '+0', icon: Clock }
+    { title: 'Total News', value: news.length.toString(), icon: Globe },
+    { title: 'Positive', value: news.filter(n => n.sentiment === 'positive').length.toString(), icon: TrendingUp },
+    { title: 'Negative', value: news.filter(n => n.sentiment === 'negative').length.toString(), icon: TrendingDown },
+    { title: 'Neutral', value: news.filter(n => n.sentiment === 'neutral').length.toString(), icon: Clock }
   ];
 
   const categories = ['All', 'Markets', 'Policy', 'Commodities', 'Global', 'Forex'];
 
   const getSentimentColor = (sentiment: string) => {
     switch (sentiment) {
-      case 'Positive': return 'bg-green-100 text-green-800';
-      case 'Negative': return 'bg-red-100 text-red-800';
-      case 'Neutral': return 'bg-gray-100 text-gray-800';
+      case 'positive': return 'bg-green-100 text-green-800';
+      case 'negative': return 'bg-red-100 text-red-800';
+      case 'neutral': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'Markets': return 'bg-blue-100 text-blue-800';
-      case 'Policy': return 'bg-purple-100 text-purple-800';
-      case 'Commodities': return 'bg-yellow-100 text-yellow-800';
-      case 'Global': return 'bg-indigo-100 text-indigo-800';
-      case 'Forex': return 'bg-green-100 text-green-800';
+    switch (category.toLowerCase()) {
+      case 'markets': return 'bg-blue-100 text-blue-800';
+      case 'policy': return 'bg-purple-100 text-purple-800';
+      case 'commodities': return 'bg-yellow-100 text-yellow-800';
+      case 'global': return 'bg-indigo-100 text-indigo-800';
+      case 'forex': return 'bg-green-100 text-green-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
 
   const filteredNews = news.filter(item => {
-    const categoryMatch = filterCategory === 'All' || item.category === filterCategory;
+    const categoryMatch = filterCategory === 'All' || item.category.toLowerCase() === filterCategory.toLowerCase();
     const searchMatch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                        item.summary.toLowerCase().includes(searchTerm.toLowerCase()) ||
                        item.category.toLowerCase().includes(searchTerm.toLowerCase());
@@ -136,13 +102,20 @@ export default function AdminMarketNews() {
   });
 
   const handleEdit = (newsItem: NewsItem) => {
+    // Clone the item to avoid direct state mutation
     setEditingNews({ ...newsItem });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (editingNews) {
-      setNews(news.map(n => n.id === editingNews.id ? editingNews : n));
-      setEditingNews(null);
+      try {
+        await updateMarketNews(editingNews._id, editingNews);
+        setNews(news.map(n => n._id === editingNews._id ? editingNews : n));
+        setEditingNews(null);
+      } catch (err) {
+        console.error("Failed to update news:", err);
+        alert("Failed to save changes. Please try again.");
+      }
     }
   };
 
@@ -151,20 +124,71 @@ export default function AdminMarketNews() {
     setShowAddForm(false);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this news article?')) {
-      setNews(news.filter(n => n.id !== id));
+      try {
+        await deleteMarketNews(id);
+        setNews(news.filter(n => n._id !== id));
+      } catch (err) {
+        console.error("Failed to delete news:", err);
+        alert("Failed to delete news. Please try again.");
+      }
+    }
+  };
+  
+  const handleAdd = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const newNewsData = {
+      title: (form.elements.namedItem('title') as HTMLInputElement).value,
+      category: (form.elements.namedItem('category') as HTMLSelectElement).value,
+      summary: (form.elements.namedItem('summary') as HTMLTextAreaElement).value,
+      sentiment: (form.elements.namedItem('sentiment') as HTMLSelectElement).value.toLowerCase() as any,
+      image: (form.elements.namedItem('image') as HTMLInputElement).value || placeholderImage,
+    };
+  
+    try {
+      const response = await createMarketNews(newNewsData);
+      setNews([...news, response.data]);
+      setShowAddForm(false);
+    } catch (err) {
+      console.error("Failed to add news:", err);
+      alert("Failed to add news. Please check the data and try again.");
     }
   };
 
-  const handleAdd = (newNews: Omit<NewsItem, 'id'>) => {
-    const newsItem: NewsItem = {
-      ...newNews,
-      id: Date.now().toString()
-    };
-    setNews([...news, newsItem]);
-    setShowAddForm(false);
+  const formatDate = (dateString: string) => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInMilliseconds = now.getTime() - date.getTime();
+    const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
+    const diffInHours = Math.floor(diffInMinutes / 60);
+
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes} minutes ago`;
+    } else if (diffInHours < 24) {
+      return `${diffInHours} hours ago`;
+    } else {
+      return date.toLocaleDateString();
+    }
   };
+
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <p className="text-gray-600">Loading market news...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <p className="text-red-600 font-medium">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -193,6 +217,7 @@ export default function AdminMarketNews() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
+        
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {stats.map((stat, index) => {
@@ -209,7 +234,7 @@ export default function AdminMarketNews() {
                   <div>
                     <p className="text-sm font-medium text-gray-600">{stat.title}</p>
                     <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                    <p className="text-sm text-green-600 font-medium">{stat.change} from last week</p>
+                    {/* <p className="text-sm text-green-600 font-medium">{stat.change} from last week</p> */}
                   </div>
                   <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                     <Icon className="w-6 h-6 text-white" />
@@ -271,7 +296,7 @@ export default function AdminMarketNews() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredNews.map((item, index) => (
                   <motion.tr
-                    key={item.id}
+                    key={item._id}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -282,7 +307,10 @@ export default function AdminMarketNews() {
                         src={item.image} 
                         alt={item.title}
                         className="w-12 h-12 rounded-lg object-cover"
-                      
+                        onError={(e) => {
+                          e.currentTarget.src = placeholderImage;
+                          e.currentTarget.alt = "Image not found";
+                        }}
                       />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -296,16 +324,16 @@ export default function AdminMarketNews() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getSentimentColor(item.sentiment)}`}>
-                        {item.sentiment === 'Positive' ? (
+                        {item.sentiment === 'positive' ? (
                           <TrendingUp className="w-3 h-3 mr-1" />
-                        ) : item.sentiment === 'Negative' ? (
+                        ) : item.sentiment === 'negative' ? (
                           <TrendingDown className="w-3 h-3 mr-1" />
                         ) : null}
-                        {item.sentiment}
+                        {item.sentiment.charAt(0).toUpperCase() + item.sentiment.slice(1)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.time}
+                      {formatDate(item.createdAt)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
@@ -317,18 +345,21 @@ export default function AdminMarketNews() {
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleDelete(item.id)}
+                          onClick={() => handleDelete(item._id)}
                           className="p-1 text-red-600 hover:text-red-800 transition-colors"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
-                        <button
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="p-1 text-green-600 hover:text-green-800 transition-colors"
                           title="View"
                         >
                           <Eye className="w-4 h-4" />
-                        </button>
+                        </a>
                       </div>
                     </td>
                   </motion.tr>
@@ -369,9 +400,9 @@ export default function AdminMarketNews() {
                       onChange={(e) => setEditingNews({...editingNews, sentiment: e.target.value as any})}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="Positive">Positive</option>
-                      <option value="Negative">Negative</option>
-                      <option value="Neutral">Neutral</option>
+                      <option value="positive">Positive</option>
+                      <option value="negative">Negative</option>
+                      <option value="neutral">Neutral</option>
                     </select>
                   </div>
                 </div>
@@ -441,72 +472,80 @@ export default function AdminMarketNews() {
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <div className="space-y-4">
+              <form onSubmit={handleAdd} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select
+                      name="category"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    >
                       {categories.filter(cat => cat !== 'All').map(category => (
-                        <option key={category} value={category}>{category}</option>
+                        <option key={category} value={category.toLowerCase()}>{category}</option>
                       ))}
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Sentiment</label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      <option value="Positive">Positive</option>
-                      <option value="Negative">Negative</option>
-                      <option value="Neutral">Neutral</option>
+                    <select
+                      name="sentiment"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    >
+                      <option value="positive">Positive</option>
+                      <option value="negative">Negative</option>
+                      <option value="neutral">Neutral</option>
                     </select>
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
                   <input
+                    name="title"
                     type="text"
                     placeholder="News title"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Summary</label>
                   <textarea
+                    name="summary"
                     placeholder="News summary"
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
                   <input
+                    name="image"
                     type="url"
                     placeholder="https://example.com/image.jpg"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">URL</label>
-                  <input
-                    type="url"
-                    placeholder="https://example.com/news"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+              
                 <div className="flex justify-end space-x-3">
                   <button
+                    type="button"
                     onClick={handleCancel}
                     className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
+                    type="submit"
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Add News</span>
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         )}
@@ -533,4 +572,4 @@ export default function AdminMarketNews() {
       </div>
     </div>
   );
-} 
+}

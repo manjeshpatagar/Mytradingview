@@ -120,7 +120,7 @@ export default function Home() {
             <div className="flex items-center space-x-8">
               <Link href="/" className="flex items-center space-x-2">
                 <BarChart3 className="w-8 h-8 text-white" />
-                <span className="text-2xl font-bold text-white">TradeView Pro</span>
+                <span className="text-2xl font-bold text-white">Trade Zone</span>
               </Link>
             </div>
 
@@ -233,7 +233,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="section-title text-white">Why Choose TradeView Pro?</h2>
+            <h2 className="section-title text-white">Why Choose Trade Zone?</h2>
             <p className="section-subtitle text-gray-300">
               Advanced technology meets proven strategies to give you the edge in today's markets
             </p>
@@ -338,7 +338,7 @@ export default function Home() {
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center space-x-2 mb-4">
                 <BarChart3 className="w-8 h-8 text-white" />
-                <span className="text-2xl font-bold text-white">TradeView Pro</span>
+                <span className="text-2xl font-bold text-white">Trade Zone</span>
               </div>
               <p className="text-gray-400 mb-6 max-w-md leading-relaxed">
                 Advanced trading platform powered by AI and real-time analytics.

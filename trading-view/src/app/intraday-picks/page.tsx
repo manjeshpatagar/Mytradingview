@@ -1,83 +1,93 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Clock,
   TrendingUp,
   TrendingDown,
   DollarSign,
-  Target,
   ArrowRight,
-  Info,
-  Star
 } from 'lucide-react';
+import { getIntradayPicks } from "../../services/intradayService";
+
+// Define a type for the intraday pick data from the API
+type IntradayPick = {
+  _id: string;
+  stockSymbol: string;
+  price: number;
+  date: string; // This is a UTC ISO string from the API
+  buyAbove: number;
+  buyTarget: number;
+  sellBelow: number;
+  sellTarget: number;
+};
 
 export default function IntradayPicks() {
   const today = new Date();
   const formatDate = (d: Date) => d.toISOString().split('T')[0];
+
+  const [selectedDate, setSelectedDate] = useState(formatDate(today));
+  const [allPicks, setAllPicks] = useState<IntradayPick[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPicks = async () => {
+      try {
+        const response = await getIntradayPicks();
+        console.log("Raw API Response:", response);
+        
+        let picksArray = [];
+        // Handle both possible API response structures
+        if (response.data && Array.isArray(response.data.data)) {
+          picksArray = response.data.data;
+        } else if (Array.isArray(response.data)) {
+          picksArray = response.data;
+        } else {
+          console.error("API response is not a valid array structure.");
+          setError("Invalid data format from server.");
+          setLoading(false);
+          return;
+        }
+
+        console.log("Parsed picksArray:", picksArray);
+        setAllPicks(picksArray);
+      } catch (err) {
+        console.error("Error fetching intraday picks:", err);
+        setError("Failed to load picks. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPicks();
+  }, []);
 
   const last7Days = Array.from({ length: 7 }).map((_, i) => {
     const d = new Date(today.getTime() - i * 86400000);
     return formatDate(d);
   });
 
-  const [selectedDate, setSelectedDate] = useState(formatDate(today));
+  // Corrected filtering logic: Format the API date string directly
+  // This avoids timezone conversion issues
+  const filteredPicks = allPicks.filter(p => p.date.split('T')[0] === selectedDate);
+  console.log("Filtered Picks for", selectedDate, ":", filteredPicks);
 
-  const allPicks = [
-    {
-      id: 1,
-      date: formatDate(today),
-      symbol: 'TATA MOTORS',
-      price: 950,
-      buyAbove: 960,
-      buyTarget: 985,
-      sellBelow: 945,
-      sellTarget: 920,
-    },
-    {
-      id: 2,
-      date: formatDate(today),
-      symbol: 'RELIANCE',
-      price: 2850,
-      buyAbove: 2875,
-      buyTarget: 2920,
-      sellBelow: 2830,
-      sellTarget: 2785,
-    },
-    {
-      id: 3,
-      date: formatDate(today),
-      symbol: 'INFY',
-      price: 1500,
-      buyAbove: 1520,
-      buyTarget: 1560,
-      sellBelow: 1480,
-      sellTarget: 1445,
-    },
-    {
-      id: 4,
-      date: formatDate(new Date(today.getTime() - 1 * 86400000)),
-      symbol: 'HDFC BANK',
-      price: 1650,
-      buyAbove: 1655,
-      buyTarget: 1680,
-      sellBelow: 1620,
-      sellTarget: 1595,
-    },
-    {
-      id: 5,
-      date: formatDate(new Date(today.getTime() - 2 * 86400000)),
-      symbol: 'ICICI BANK',
-      price: 935,
-      buyAbove: 950,
-      buyTarget: 975,
-      sellBelow: 920,
-      sellTarget: 890,
-    },
-    
-  ];
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <p className="text-gray-600">Loading intraday picks...</p>
+      </div>
+    );
+  }
 
-  const filteredPicks = allPicks.filter(p => p.date === selectedDate);
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <p className="text-red-600 font-medium">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -90,7 +100,7 @@ export default function IntradayPicks() {
             </div>
             <div className="flex items-center space-x-2 text-sm text-gray-500">
               <Clock className="w-4 h-4" />
-              <span>Last updated: 11:30 AM IST</span>
+              <span>Last updated: {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} IST</span>
             </div>
           </div>
         </div>
@@ -150,13 +160,13 @@ export default function IntradayPicks() {
                 {filteredPicks.length > 0 ? (
                   filteredPicks.map((pick, index) => (
                     <motion.tr
-                      key={pick.id}
+                      key={pick._id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.5, delay: index * 0.1 }}
                       className="hover:bg-gray-50 transition-colors cursor-pointer"
                     >
-                      <td className="px-6 py-4 text-md font-semibold text-gray-900">{pick.symbol}</td>
+                      <td className="px-6 py-4 text-md font-semibold text-gray-900">{pick.stockSymbol}</td>
                       <td className="px-6 py-4 text-md text-blue-600">₹{pick.price}</td>
                       <td className="px-6 py-4 text-md text-green-700 font-medium">₹{pick.buyAbove}</td>
                       <td className="px-6 py-4 text-md text-green-700 font-medium">₹{pick.buyTarget}</td>

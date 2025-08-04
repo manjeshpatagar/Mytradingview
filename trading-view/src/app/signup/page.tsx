@@ -66,7 +66,7 @@ export default function Signup() {
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center space-x-2 mb-6">
               <BarChart3 className="w-8 h-8 text-blue-600" />
-              <span className="text-2xl font-bold text-gray-900">TradeView Pro</span>
+              <span className="text-2xl font-bold text-gray-900">Trade Zone</span>
             </Link>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
             <p className="text-gray-600">Join thousands of successful traders</p>
