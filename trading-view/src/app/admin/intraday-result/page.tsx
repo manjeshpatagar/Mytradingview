@@ -1,121 +1,110 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Activity,
   TrendingUp,
   TrendingDown,
-  Calendar,
+  Info,
   Plus,
   Edit,
   Trash2,
   X,
-  Save,
-  Info
+  Save
 } from 'lucide-react';
+import {
+  getIntradayResults,
+  addIntradayResult,
+  updateIntradayResult,
+  deleteIntradayResult
+} from '../../../services/intradyresultService';
 
-
-type IntradayPick = {
-  id: number;
-  symbol: string;
-  company: string;
+// Define the type for the results to match the Mongoose schema
+type IntradayResult = {
+  _id: string;
+  stockName: string;
   entry: number;
   exit: number;
   return: number;
-  status: 'Success' | 'Failure';
-  profit: 'Buy Side' | 'Sell Side';
+  status: 'success' | 'failure';
+  profit: 'bye side' | 'sell side';
 };
 
 export default function AdminIntradayResult() {
-  const [results, setResults] = useState<IntradayPick[]>([
-    {
-      id: 1,
-      symbol: 'RELIANCE',
-      company: 'Reliance Industries',
-      entry: 2450,
-      exit: 2520,
-      return: 2.86,
-      status: 'Success',
-      profit: 'Buy Side',
-    },
-    {
-      id: 2,
-      symbol: 'RELIANCE',
-      company: 'Reliance Industries',
-      entry: 200,
-      exit: 197,
-      return: -1.5,
-      status: 'Failure',
-      profit: 'Sell Side',
-    },
-  ]);
-
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [form, setForm] = useState<Omit<IntradayPick, 'id'>>({
-    symbol: '',
-    company: '',
+  const [results, setResults] = useState<IntradayResult[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [form, setForm] = useState({
+    stockName: '',
     entry: 0,
     exit: 0,
-    return: 0,
-    status: 'Success',
-    profit: 'Buy Side',
+    return: 0, // Added the return field to the form state
+    status: 'success' as 'success' | 'failure',
+    profit: 'bye side' as 'bye side' | 'sell side',
   });
+
+  const fetchResults = async () => {
+    setLoading(true);
+    const data = await getIntradayResults();
+    setResults(data.data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchResults();
+  }, []);
 
   const resetForm = () => {
     setForm({
-      symbol: '',
-      company: '',
+      stockName: '',
       entry: 0,
       exit: 0,
       return: 0,
-      status: 'Success',
-      profit: 'Buy Side',
+      status: 'success',
+      profit: 'bye side',
     });
     setEditingId(null);
   };
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
+    // The `return` value is now taken directly from the form state
     const newItem = {
       ...form,
-      id: Date.now(),
-      return: +(((form.exit - form.entry) / form.entry) * 100).toFixed(2),
     };
-    setResults([newItem, ...results]);
+    await addIntradayResult(newItem);
     resetForm();
+    fetchResults();
   };
 
-  const handleEdit = (item: IntradayPick) => {
-    setEditingId(item.id);
+  const handleEdit = (item: IntradayResult) => {
+    setEditingId(item._id);
     setForm({
-      symbol: item.symbol,
-      company: item.company,
+      stockName: item.stockName,
       entry: item.entry,
       exit: item.exit,
-      return: item.return,
+      return: item.return, // Populate the return field when editing
       status: item.status,
       profit: item.profit,
     });
   };
 
-  const handleUpdate = () => {
-    setResults(prev =>
-      prev.map(item =>
-        item.id === editingId
-          ? {
-              ...item,
-              ...form,
-              return: +(((form.exit - form.entry) / form.entry) * 100).toFixed(2),
-            }
-          : item
-      )
-    );
-    resetForm();
+  const handleUpdate = async () => {
+    if (editingId) {
+      // The `return` value is now taken directly from the form state
+      const updatedItem = {
+        ...form,
+      };
+      await updateIntradayResult(editingId, updatedItem);
+      resetForm();
+      fetchResults();
+    }
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this result?')) {
-      setResults(results.filter(r => r.id !== id));
+      await deleteIntradayResult(id);
+      fetchResults();
     }
   };
 
@@ -146,47 +135,46 @@ export default function AdminIntradayResult() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <input
               type="text"
-              placeholder="Symbol"
+              placeholder="Stock Name"
               className="border px-3 py-2 rounded-md"
-              value={form.symbol}
-              onChange={e => setForm({ ...form, symbol: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Company"
-              className="border px-3 py-2 rounded-md"
-              value={form.company}
-              onChange={e => setForm({ ...form, company: e.target.value })}
+              value={form.stockName}
+              onChange={e => setForm({ ...form, stockName: e.target.value })}
             />
             <input
               type="number"
               placeholder="Entry Price"
               className="border px-3 py-2 rounded-md"
-              value={form.entry}
+              value={form.entry || ''}
               onChange={e => setForm({ ...form, entry: parseFloat(e.target.value) || 0 })}
             />
             <input
               type="number"
               placeholder="Exit Price"
               className="border px-3 py-2 rounded-md"
-              value={form.exit}
+              value={form.exit || ''}
               onChange={e => setForm({ ...form, exit: parseFloat(e.target.value) || 0 })}
+            />
+            <input
+              type="number"
+              placeholder="Return (%)"
+              className="border px-3 py-2 rounded-md"
+              value={form.return || ''}
+              onChange={e => setForm({ ...form, return: parseFloat(e.target.value) || 0 })}
             />
             <select
               className="border px-3 py-2 rounded-md"
               value={form.status}
-              onChange={e => setForm({ ...form, status: e.target.value as 'Success' | 'Failure' })}
+              onChange={e => setForm({ ...form, status: e.target.value as 'success' | 'failure' })}
             >
-              <option value="Success">Success</option>
-              <option value="Failure">Failure</option>
+              <option value="success">Success</option>
             </select>
             <select
               className="border px-3 py-2 rounded-md"
               value={form.profit}
-              onChange={e => setForm({ ...form, profit: e.target.value as 'Buy Side' | 'Sell Side' })}
+              onChange={e => setForm({ ...form, profit: e.target.value as 'bye side' | 'sell side' })}
             >
-              <option value="Buy Side">Buy Side</option>
-              <option value="Sell Side">Sell Side</option>
+              <option value="bye side">Buy Side</option>
+              <option value="sell side">Sell Side</option>
             </select>
           </div>
           <div className="mt-4 flex gap-3">
@@ -218,70 +206,81 @@ export default function AdminIntradayResult() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-                  <th className="px-4 py-3">Entry</th>
-                  <th className="px-4 py-3">Exit</th>
-                  <th className="px-4 py-3">Return</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Profit</th>
-                  <th className="px-4 py-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {results.map((stock, index) => (
-                  <motion.tr
-                    key={stock.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="px-4 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                      {stock.symbol}
-                      <div className="text-sm text-gray-500">{stock.company}</div>
-                    </td>
-                    <td className="px-4 py-4 text-sm">₹{stock.entry}</td>
-                    <td className="px-4 py-4 text-sm">₹{stock.exit}</td>
-                    <td className="px-4 py-4 text-sm font-semibold text-green-600">
-                      {stock.return >= 0 ? '+' : ''}
-                      {stock.return}%
-                    </td>
-                    <td className="px-4 py-4">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          stock.status === 'Success'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}
+            {loading ? (
+              <div className="text-center text-gray-500 py-8">Loading results...</div>
+            ) : (
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Entry</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Exit</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Return</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profit</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {results.length > 0 ? (
+                    results.map((stock, index) => (
+                      <motion.tr
+                        key={stock._id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: index * 0.1 }}
+                        className="hover:bg-gray-50 transition-colors"
                       >
-                        {stock.status === 'Success' ? (
-                          <TrendingUp className="w-3 h-3 mr-1" />
-                        ) : (
-                          <TrendingDown className="w-3 h-3 mr-1" />
-                        )}
-                        {stock.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 text-sm font-semibold">
-                      <span className={stock.profit === 'Buy Side' ? 'text-green-600' : 'text-red-600'}>
-                        {stock.profit}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 flex gap-2">
-                      <button onClick={() => handleEdit(stock)} className="text-blue-600 hover:text-blue-800">
-                        <Edit size={16} />
-                      </button>
-                      <button onClick={() => handleDelete(stock.id)} className="text-red-600 hover:text-red-800">
-                        <Trash2 size={16} />
-                      </button>
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                          {stock.stockName}
+                        </td>
+                        <td className="px-4 py-4 text-sm">₹{stock.entry}</td>
+                        <td className="px-4 py-4 text-sm">₹{stock.exit}</td>
+                        <td className="px-4 py-4 text-sm font-semibold text-green-600">
+                          {stock.return >= 0 ? '+' : ''}
+                          {stock.return}%
+                        </td>
+                        <td className="px-4 py-4">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              stock.status === 'success'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}
+                          >
+                            {stock.status === 'success' ? (
+                              <TrendingUp className="w-3 h-3 mr-1" />
+                            ) : (
+                              <TrendingDown className="w-3 h-3 mr-1" />
+                            )}
+                            {stock.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4 text-sm font-semibold">
+                          <span className={stock.profit === 'bye side' ? 'text-green-600' : 'text-red-600'}>
+                            {stock.profit}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4 flex gap-2">
+                          <button onClick={() => handleEdit(stock)} className="text-blue-600 hover:text-blue-800">
+                            <Edit size={16} />
+                          </button>
+                          <button onClick={() => handleDelete(stock._id)} className="text-red-600 hover:text-red-800">
+                            <Trash2 size={16} />
+                          </button>
+                        </td>
+                      </motion.tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
+                        No results available. Add a new one above.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
 
