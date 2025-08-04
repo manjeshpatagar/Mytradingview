@@ -108,7 +108,7 @@ export default function Home() {
     { name: 'Stock News', href: '/stock-news', icon: Newspaper },
     { name: 'Market News', href: '/market-news', icon: Globe },
     { name: 'Trade Plan', href: '/trade-plan', icon: BookOpen },
-    { name: 'Performance', href: '/intraday-results', icon: Activity }
+    { name: 'Today Performance', href: '/intraday-results', icon: Activity }
   ];
 
   return (

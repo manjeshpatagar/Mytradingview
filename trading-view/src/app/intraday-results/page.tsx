@@ -73,7 +73,7 @@ export default function IntradayResults() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Top Performers</h2>
+              <h2 className="text-xl font-semibold text-gray-900">Today's Top Performers</h2>
               <p className="text-gray-600">Best performing picks from today's trades</p>
             </div>
           </div>
