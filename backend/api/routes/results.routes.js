@@ -6,12 +6,11 @@ import {
   updateResult,
   deleteResult,
 } from "../controllers/results.controller.js";
-// import { protect } from "../middleware/auth.middleware.js";
-// import { adminOnly } from "../middleware/roles.middleware.js";
+import { protect } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-// router.use(protect);
+router.use(protect);
 
 router.route("/").post(createResult).get(getAllResults);
 
