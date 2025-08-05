@@ -27,7 +27,7 @@ export default function Home() {
       icon: TrendingUp,
       title: "Advanced Analytics",
       description: "Real-time market data with AI-powered insights and predictive analytics."
-    },
+    },    
     {
       icon: Target,
       title: "Precision Trading",
@@ -58,13 +58,13 @@ export default function Home() {
   const stats = [
     { label: "Active Traders", value: "50K+" },
     { label: "Success Rate", value: "85%" },
-    { label: "Daily Signals", value: "200+" },
+    { label: "Daily Signals", value: "50+" },
     { label: "Countries", value: "150+" }
   ];
 
   const testimonials = [
     {
-      name: "Ravi Mehta",
+      name: "Ravi",
       role: "Intraday Trader, Mumbai",
       content: "buy/sell levels are pure gold! I used to struggle to enter at the right time, but now my accuracy has improved drastically. Highly recommended for serious traders.",
       rating: 5
@@ -112,7 +112,8 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-bule-900 to-slate-900">
+   <div className="min-h-screen bg-gradient-to-br from-gray-900 via-cyan-800 to-gray-900">
+
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 glass-effect border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-4">

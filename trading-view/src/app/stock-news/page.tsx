@@ -2,20 +2,60 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Newspaper, Clock, TrendingUp, TrendingDown, ExternalLink } from 'lucide-react';
-import { getAllStockNews } from "../../services/stockNewsService";
+import {
+  Newspaper,
+  Clock,
+  TrendingUp,
+  TrendingDown,
+  ExternalLink,
+  Minus,
+} from 'lucide-react';
+import { getAllStockNews } from '../../services/stockNewsService';
 
-// Define a type for the news data from the API
+// Define the type for the news item
 type NewsItem = {
-  _id: string; // The unique ID from the database
+  _id: string;
   title: string;
   company: string;
-  symbol: string; // Added symbol field for consistency with other components
+  symbol: string;
   summary: string;
   sentiment: 'Positive' | 'Negative' | 'Neutral';
-  createdAt: string; // Using createdAt timestamp from the API
+  createdAt: string;
   url: string;
-  image?: string; // Optional image URL
+  image?: string;
+};
+
+// Helper to color-code sentiment
+const getSentimentColor = (sentiment: string) => {
+  switch (sentiment.toLowerCase()) {
+    case 'positive':
+      return 'bg-green-100 text-green-700';
+    case 'negative':
+      return 'bg-red-100 text-red-700';
+    case 'neutral':
+      return 'bg-yellow-100 text-yellow-700';
+    default:
+      return 'bg-gray-100 text-gray-700';
+  }
+};
+
+// Format time ago
+const formatTimeAgo = (dateString: string) => {
+  const now = new Date();
+  const then = new Date(dateString);
+  const seconds = Math.floor((now.getTime() - then.getTime()) / 1000);
+
+  let interval = seconds / 31536000;
+  if (interval > 1) return Math.floor(interval) + ' years ago';
+  interval = seconds / 2592000;
+  if (interval > 1) return Math.floor(interval) + ' months ago';
+  interval = seconds / 86400;
+  if (interval > 1) return Math.floor(interval) + ' days ago';
+  interval = seconds / 3600;
+  if (interval > 1) return Math.floor(interval) + ' hours ago';
+  interval = seconds / 60;
+  if (interval > 1) return Math.floor(interval) + ' minutes ago';
+  return Math.floor(seconds) + ' seconds ago';
 };
 
 export default function StockNews() {
@@ -23,46 +63,6 @@ export default function StockNews() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Helper function to get the color for sentiment
-  const getSentimentColor = (sentiment: string) => {
-    switch (sentiment) {
-      case 'Positive': return 'bg-green-100 text-green-800';
-      case 'Negative': return 'bg-red-100 text-red-800';
-      case 'Neutral': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  // Helper function to format the time since the news was posted
-  const formatTimeAgo = (dateString: string) => {
-    const now = new Date();
-    const then = new Date(dateString);
-    const seconds = Math.floor((now.getTime() - then.getTime()) / 1000);
-
-    let interval = seconds / 31536000;
-    if (interval > 1) {
-      return Math.floor(interval) + " years ago";
-    }
-    interval = seconds / 2592000;
-    if (interval > 1) {
-      return Math.floor(interval) + " months ago";
-    }
-    interval = seconds / 86400;
-    if (interval > 1) {
-      return Math.floor(interval) + " days ago";
-    }
-    interval = seconds / 3600;
-    if (interval > 1) {
-      return Math.floor(interval) + " hours ago";
-    }
-    interval = seconds / 60;
-    if (interval > 1) {
-      return Math.floor(interval) + " minutes ago";
-    }
-    return Math.floor(seconds) + " seconds ago";
-  };
-
-  // Fetch news data on component mount
   useEffect(() => {
     const fetchNews = async () => {
       try {
@@ -70,8 +70,7 @@ export default function StockNews() {
         const newsData = res.data?.data || res.data;
 
         if (Array.isArray(newsData)) {
-          const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
-
+          const today = new Date().toISOString().split('T')[0];
           const todaysNews = newsData.filter((item: NewsItem) => {
             const createdDate = new Date(item.createdAt).toISOString().split('T')[0];
             return createdDate === today;
@@ -79,24 +78,20 @@ export default function StockNews() {
 
           setNews(todaysNews);
         } else {
-          console.error("API response is not a valid array structure.");
-          setError("Invalid data format from server.");
+          setError('Invalid data format from server.');
         }
       } catch (err) {
-        console.error("Failed to fetch stock news", err);
-        setError("Failed to load news. Please try again later.");
+        console.error(err);
+        setError('Failed to load news.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchNews(); // Initial load
-
-    const interval = setInterval(fetchNews, 5000); // Refresh every 5 seconds
-
-    return () => clearInterval(interval); // Cleanup on unmount
+    fetchNews();
+    const interval = setInterval(fetchNews, 5000);
+    return () => clearInterval(interval);
   }, []);
-
 
   if (loading) {
     return (
@@ -118,23 +113,22 @@ export default function StockNews() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center space-x-3 mb-2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+          <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md flex items-center justify-center">
               <Newspaper className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 leading-tight">Stock News</h1>
-              <p className="text-sm text-gray-600 leading-snug">Latest company-specific news and updates</p>
+              <h1 className="text-xl font-bold text-gray-900">Stock News</h1>
+              <p className="text-sm text-gray-600">Today’s company updates & sentiments</p>
             </div>
           </div>
         </div>
       </div>
 
-
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* News Grid */}
-        <div className="flex flex-col gap-6 mb-8">
+      {/* News List */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <div className="flex flex-col gap-6">
           {news.length > 0 ? (
             news.map((item, index) => (
               <motion.div
@@ -142,19 +136,22 @@ export default function StockNews() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow flex"
+                className="bg-white rounded-xl shadow border border-gray-200 hover:shadow-md transition-shadow flex flex-col sm:flex-row"
               >
-                {/* Left: Image */}
-                <div className="w-48 h-auto flex-shrink-0">
+                {/* Image */}
+                <div className="sm:w-48 w-full h-48 sm:h-auto flex-shrink-0">
                   <img
-                    src={item.image || `https://placehold.co/400x400/E5E7EB/6B7280?text=${item.company}+News`}
+                    src={
+                      item.image ||
+                      `https://placehold.co/400x400/E5E7EB/6B7280?text=${item.company}+News`
+                    }
                     alt={item.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-t-xl sm:rounded-l-xl sm:rounded-tr-none"
                   />
                 </div>
 
-                {/* Right: Content */}
-                <div className="flex flex-col justify-between p-6 w-full">
+                {/* Content */}
+                <div className="flex flex-col justify-between p-4 w-full">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-gray-500">{item.company}</span>
                     <span
@@ -162,22 +159,31 @@ export default function StockNews() {
                         item.sentiment
                       )}`}
                     >
-                      {item.sentiment === 'Positive' ? (
+                      {item.sentiment.toLowerCase() === 'positive' && (
                         <TrendingUp className="w-3 h-3 mr-1" />
-                      ) : null}
-                      {item.sentiment === 'Negative' ? (
+                      )}
+                      {item.sentiment.toLowerCase() === 'negative' && (
                         <TrendingDown className="w-3 h-3 mr-1" />
-                      ) : null}
+                      )}
+                      {item.sentiment.toLowerCase() === 'neutral' && (
+                        <Minus className="w-3 h-3 mr-1" />
+                      )}
                       {item.sentiment}
                     </span>
                   </div>
 
-                  <h3 className="text-base font-semibold text-gray-900 mb-1 line-clamp-1" title={item.title}>
-                    {item.title.length > 30 ? item.title.slice(0, 30) + '...' : item.title}
+                  <h3
+                    className="text-base font-semibold text-gray-900 mb-1 line-clamp-1"
+                    title={item.title}
+                  >
+                    {item.title}
                   </h3>
 
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2" title={item.summary}>
-                    {item.summary.length > 50 ? item.summary.slice(0, 100) + '...' : item.summary}
+                  <p
+                    className="text-sm text-gray-600 mb-3 line-clamp-2"
+                    title={item.summary}
+                  >
+                    {item.summary}
                   </p>
 
                   <div className="flex items-center justify-between text-sm text-gray-500">
@@ -196,41 +202,33 @@ export default function StockNews() {
                     </a>
                   </div>
                 </div>
-
               </motion.div>
             ))
           ) : (
             <div className="text-center text-gray-500 py-10">
-              <p>No news articles available at the moment.</p>
+              <p>No news available today.</p>
             </div>
           )}
-
         </div>
       </div>
 
       {/* Disclaimer */}
       <div className="fixed bottom-0 w-full z-40 bg-yellow-50 border-t border-yellow-300">
-        <div className="flex justify-center">
-          <div className="rounded-xl p-4 w-full max-w-3xl shadow-sm m-2 ">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <Newspaper className="h-5 w-5 text-yellow-500" />
-              </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-semibold text-yellow-800">News Disclaimer</h3>
-                <div className="mt-1 text-sm text-yellow-700">
-                  <p>
-                    News content is aggregated from various sources for informational purposes only.
-                    Please verify information from official sources before making investment decisions.
-                  </p>
-                </div>
-              </div>
+        <div className="max-w-3xl mx-auto p-4">
+          <div className="flex items-start gap-3">
+            <Newspaper className="h-5 w-5 text-yellow-500 mt-1" />
+            <div>
+              <h3 className="text-sm font-semibold text-yellow-800">
+                News Disclaimer
+              </h3>
+              <p className="text-sm text-yellow-700 mt-1">
+                News content is aggregated from various sources for informational purposes only.
+                Verify with official sources before investing.
+              </p>
             </div>
           </div>
         </div>
       </div>
-
-
     </div>
   );
 }

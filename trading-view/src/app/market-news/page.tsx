@@ -138,13 +138,13 @@ export default function MarketNewsPage() {
                         </span>
                       </div>
 
-                  <h3 className="text-base font-semibold text-gray-900 mb-1 line-clamp-1" title={item.title}>
-                    {item.title.length > 30 ? item.title.slice(0, 30) + '...' : item.title}
-                  </h3>
+                      <h3 className="text-base font-semibold text-gray-900 mb-1 line-clamp-1" title={item.title}>
+                        {item.title.length > 30 ? item.title.slice(0, 50) + '...' : item.title}
+                      </h3>
 
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2" title={item.summary}>
-                    {item.summary.length > 50 ? item.summary.slice(0, 100) + '...' : item.summary}
-                  </p>
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-6" title={item.summary}>
+                        {item.summary.length > 50 ? item.summary.slice(0, 10000) + '...' : item.summary}
+                      </p>
                     </div>
 
                     <div className="flex items-center justify-between text-sm text-gray-500 mt-2">

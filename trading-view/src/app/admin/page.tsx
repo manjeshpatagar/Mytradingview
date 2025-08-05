@@ -1,14 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { 
-  BarChart3, 
-  FileText, 
-  Newspaper, 
-  Users, 
-  Settings, 
+import {
+  BarChart3,
+  FileText,
+  Newspaper,
+  Users,
+  Settings,
   Plus,
   TrendingUp,
   Calendar,
@@ -18,11 +19,25 @@ import {
   LogOut,
   DollarSign,
   Globe,
-  Target
+  Target,
 } from 'lucide-react';
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('dashboard');
+
+  // 🔐 Check login status
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem('admin-auth');
+    if (!isLoggedIn) {
+      router.push('/admin');
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin-auth');
+    router.push('/admin/login');
+  };
 
   const stats = [
     { title: 'Total News', value: '24', icon: Newspaper, color: 'bg-blue-500' },
@@ -31,8 +46,6 @@ export default function AdminDashboard() {
     { title: 'Users', value: '1,234', icon: Users, color: 'bg-orange-500' },
     { title: 'Results', value: '56', icon: DollarSign, color: 'bg-red-500' },
     { title: 'Intraday Picks', value: '15', icon: Target, color: 'bg-yellow-500' },
-    
-
   ];
 
   const recentNews = [
@@ -49,13 +62,11 @@ export default function AdminDashboard() {
     { id: 'market-news', label: 'Market News', icon: FileText, href: '/admin/market-news' },
     { id: 'results', label: 'Results & Events', icon: DollarSign, href: '/admin/results' },
     { id: 'intraday-picks', label: 'Intraday Picks', icon: Target, href: '/admin/intraday-picks' },
+     { id: 'admin-intraday-results', label: 'Intraday results', icon: Target, href: '/admin/intraday-result' },
     { id: 'users', label: 'User Management', icon: Users, href: '/admin/users' },
     { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/settings' },
-    { id: 'admin-intraday-results', label: 'Intraday results', icon: Target, href: '/admin/intraday-result' },
-    
-
-    
-  ];    
+   
+  ];  
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -69,7 +80,10 @@ export default function AdminDashboard() {
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">Welcome, Admin</span>
-              <button className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+              >
                 <LogOut className="w-4 h-4" />
                 <span>Logout</span>
               </button>

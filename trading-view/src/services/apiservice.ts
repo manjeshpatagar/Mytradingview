@@ -1,13 +1,13 @@
-// src/services/apiservice.ts
-import axios ,{AxiosInstance} from "axios";
+import axios from "axios";
 
-const ApiService:AxiosInstance = axios.create({
-  baseURL: "http://192.168.1.38:5006/api", // ✅ Use backend machine’s LAN IP
+const ApiService = axios.create({
+  baseURL: "https://api.trade-zone.cloudbeaststudio.com/api",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
+// Automatically add token to all requests
 ApiService.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {

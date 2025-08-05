@@ -31,37 +31,46 @@ export default function IntradayPicks() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchPicks = async () => {
-      try {
-        const response = await getIntradayPicks();
-        console.log("Raw API Response:", response);
+useEffect(() => {
+  const fetchPicks = async (showLoader = true) => {
+    if (showLoader) setLoading(true);
+    try {
+      const response = await getIntradayPicks();
+      console.log("Raw API Response:", response);
 
-        let picksArray = [];
-        // Handle both possible API response structures
-        if (response.data && Array.isArray(response.data.data)) {
-          picksArray = response.data.data;
-        } else if (Array.isArray(response.data)) {
-          picksArray = response.data;
-        } else {
-          console.error("API response is not a valid array structure.");
-          setError("Invalid data format from server.");
-          setLoading(false);
-          return;
-        }
-
-        console.log("Parsed picksArray:", picksArray);
-        setAllPicks(picksArray);
-      } catch (err) {
-        console.error("Error fetching intraday picks:", err);
-        setError("Failed to load picks. Please try again later.");
-      } finally {
-        setLoading(false);
+      let picksArray = [];
+      if (response.data && Array.isArray(response.data.data)) {
+        picksArray = response.data.data;
+      } else if (Array.isArray(response.data)) {
+        picksArray = response.data;
+      } else {
+        console.error("API response is not a valid array structure.");
+        setError("Invalid data format from server.");
+        if (showLoader) setLoading(false);
+        return;
       }
-    };
 
-    fetchPicks();
-  }, []);
+      console.log("Parsed picksArray:", picksArray);
+      setAllPicks(picksArray);
+    } catch (err) {
+      console.error("Error fetching intraday picks:", err);
+      setError("Failed to load picks. Please try again later.");
+    } finally {
+      if (showLoader) setLoading(false);
+    }
+  };
+
+  // Fetch initially with loader
+  fetchPicks(true);
+
+  // Refresh every 5 seconds without loader
+  const interval = setInterval(() => {
+    fetchPicks(false);
+  }, 5000);
+
+  return () => clearInterval(interval); // Cleanup on unmount
+}, []);
+
 
   const last7Days = Array.from({ length: 7 }).map((_, i) => {
     const d = new Date(today.getTime() - i * 86400000);
