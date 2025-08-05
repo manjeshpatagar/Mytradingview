@@ -1,14 +1,26 @@
 // controllers/marketNews.controller.js
 import { asyncHandler } from "../utils/asyncHandler.js";
 import MarketNews from "../models/marketNews.model.js";
+import moment from "moment";
 
 export const createMarketNews = asyncHandler(async (req, res) => {
   const marketNews = await MarketNews.create(req.body);
   res.status(201).json(marketNews);
 });
 
+// export const getAllMarketNews = asyncHandler(async (req, res) => {
+//   const news = await MarketNews.find().sort({ createdAt: -1 });
+//   res.json(news);
+// });
+
 export const getAllMarketNews = asyncHandler(async (req, res) => {
-  const news = await MarketNews.find().sort({ createdAt: -1 });
+  const startOfDay = moment().startOf("day").toDate(); // today 00:00:00
+  const endOfDay = moment().endOf("day").toDate(); // today 23:59:59
+
+  const news = await MarketNews.find({
+    createdAt: { $gte: startOfDay, $lte: endOfDay },
+  }).sort({ createdAt: -1 });
+
   res.json(news);
 });
 

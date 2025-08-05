@@ -1,14 +1,24 @@
 import Results from "../models/results.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
+import moment from "moment";
 
 export const createResult = asyncHandler(async (req, res) => {
   const result = await Results.create(req.body);
   res.status(201).json({ success: true, data: result });
 });
 
+// export const getAllResults = asyncHandler(async (req, res) => {
+//   const results = await Results.find();
+//   res.status(200).json({ success: true, data: results });
+// });
+
 export const getAllResults = asyncHandler(async (req, res) => {
-  const results = await Results.find();
+  const startOfDay = moment().startOf("day").toDate();
+  const endOfDay = moment().endOf("day").toDate();
+  const results = await Results.find({
+    createdAt: { $gte: startOfDay, $lte: endOfDay },
+  }).sort({ createdAt: -1 });
   res.status(200).json({ success: true, data: results });
 });
 

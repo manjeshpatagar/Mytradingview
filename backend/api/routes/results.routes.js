@@ -7,7 +7,6 @@ import {
   deleteResult,
 } from "../controllers/results.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
-// import { adminOnly } from "../middleware/roles.middleware.js";
 
 const router = express.Router();
 
