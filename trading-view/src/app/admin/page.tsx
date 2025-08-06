@@ -25,20 +25,24 @@ import {
 export default function AdminDashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [loading, setLoading] = useState(true);
 
-  // 🔐 Check login status
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem('admin-auth');
+    const isLoggedIn = localStorage.getItem('token');
+    console.log("Admin auth status:", isLoggedIn);
     if (!isLoggedIn) {
-      router.push('/admin');
+      router.push('/admin/login');
+    } else {
+      setLoading(false);
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('admin-auth');
+    localStorage.removeItem('token');
     router.push('/admin/login');
   };
 
+  if (loading) return null;
   const stats = [
     { title: 'Total News', value: '24', icon: Newspaper, color: 'bg-blue-500' },
     { title: 'Stock News', value: '12', icon: TrendingUp, color: 'bg-green-500' },

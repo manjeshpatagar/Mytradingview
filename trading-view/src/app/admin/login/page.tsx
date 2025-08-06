@@ -1,12 +1,19 @@
-
 'use client';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { login } from "../../../services/loginService";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("admin"); // default for test
-  const [password, setPassword] = useState("1234");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      // ✅ Already logged in, redirect to dashboard
+      // window.location.href = "/admin";
+    }
+  }, []);
 
   const handleLogin = async () => {
     try {
@@ -15,8 +22,7 @@ const LoginPage = () => {
       // ✅ Save token to localStorage
       localStorage.setItem("token", res.token);
       console.log("Login successful:", res.user);
-
-      // Optional: redirect to dashboard
+      // Redirect to dashboard
       window.location.href = "/admin";
     } catch (err: any) {
       setError("Login failed. Please check your credentials.");

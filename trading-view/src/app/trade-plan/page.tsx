@@ -236,7 +236,7 @@ export default function TradePlan() {
         </div>
 
         {/* Disclaimer */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-yellow-50 border-t border-yellow-300 shadow-md px-4 py-3">
+       <div className="mt-8 bg-yellow-100 border-t border-yellow-300 text-gray-800 text-sm p-4 shadow-md rounded-md">
           <div className="max-w-7xl mx-auto flex">
             <div className="flex-shrink-0 mt-1">
               <AlertTriangle className="h-5 w-5 text-yellow-500" />

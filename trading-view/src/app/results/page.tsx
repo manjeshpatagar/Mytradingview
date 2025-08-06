@@ -207,7 +207,7 @@ export default function Results() {
         </div>
 
         {/* Disclaimer */}
-        <div className="fixed bottom-0 left-0 w-full z-40 bg-blue-50 border-t border-blue-200">
+        <div className="mt-8 bg-yellow-100 border-t border-yellow-300 text-gray-800 text-sm p-4 shadow-md rounded-md">
           <div className="max-w-7xl mx-auto px-4 py-3">
             <div className="flex">
               <div className="flex-shrink-0">
@@ -225,6 +225,7 @@ export default function Results() {
             </div>
           </div>
         </div>
+
 
       </div>
     </div>

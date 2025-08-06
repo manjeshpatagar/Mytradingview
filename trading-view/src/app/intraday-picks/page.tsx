@@ -31,56 +31,46 @@ export default function IntradayPicks() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-useEffect(() => {
-  const fetchPicks = async (showLoader = true) => {
-    if (showLoader) setLoading(true);
-    try {
-      const response = await getIntradayPicks();
-      console.log("Raw API Response:", response);
-
-      let picksArray = [];
-      if (response.data && Array.isArray(response.data.data)) {
-        picksArray = response.data.data;
-      } else if (Array.isArray(response.data)) {
-        picksArray = response.data;
-      } else {
-        console.error("API response is not a valid array structure.");
-        setError("Invalid data format from server.");
+  useEffect(() => {
+    const fetchPicks = async (showLoader = true) => {
+      if (showLoader) setLoading(true);
+      try {
+        const response = await getIntradayPicks();
+        let picksArray = [];
+        if (response.data && Array.isArray(response.data.data)) {
+          picksArray = response.data.data;
+        } else if (Array.isArray(response.data)) {
+          picksArray = response.data;
+        } else {
+          console.error("API response is not a valid array structure.");
+          setError("Invalid data format from server.");
+          if (showLoader) setLoading(false);
+          return;
+        }
+        setAllPicks(picksArray);
+      } catch (err) {
+        console.error("Error fetching intraday picks:", err);
+        setError("Failed to load picks. Please try again later.");
+      } finally {
         if (showLoader) setLoading(false);
-        return;
       }
+    };
 
-      console.log("Parsed picksArray:", picksArray);
-      setAllPicks(picksArray);
-    } catch (err) {
-      console.error("Error fetching intraday picks:", err);
-      setError("Failed to load picks. Please try again later.");
-    } finally {
-      if (showLoader) setLoading(false);
-    }
-  };
+    fetchPicks(true);
 
-  // Fetch initially with loader
-  fetchPicks(true);
+    const interval = setInterval(() => {
+      fetchPicks(false);
+    }, 5000);
 
-  // Refresh every 5 seconds without loader
-  const interval = setInterval(() => {
-    fetchPicks(false);
-  }, 5000);
-
-  return () => clearInterval(interval); // Cleanup on unmount
-}, []);
-
+    return () => clearInterval(interval);
+  }, []);
 
   const last7Days = Array.from({ length: 7 }).map((_, i) => {
     const d = new Date(today.getTime() - i * 86400000);
     return formatDate(d);
   });
 
-  // Corrected filtering logic: Format the API date string directly
-  // This avoids timezone conversion issues
   const filteredPicks = allPicks.filter(p => p.date.split('T')[0] === selectedDate);
-  console.log("Filtered Picks for", selectedDate, ":", filteredPicks);
 
   if (loading) {
     return (
@@ -102,12 +92,12 @@ useEffect(() => {
     <div className="min-h-screen bg-gray-50">
       <div className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-xl font-semibold text-gray-900 mb-1">Intraday Trading Picks</h1>
               <p className="text-sm text-gray-600">Real-time trading signals for the past 7 days</p>
             </div>
-            <div className="flex items-center space-x-2 text-xs text-gray-500">
+            <div className="flex items-center space-x-2 text-xs text-gray-500 mt-2 sm:mt-0">
               <Clock className="w-4 h-4" />
               <span>
                 Last updated: {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} IST
@@ -116,7 +106,6 @@ useEffect(() => {
           </div>
         </div>
       </div>
-
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Date Selector */}
@@ -128,8 +117,8 @@ useEffect(() => {
                 key={date}
                 onClick={() => setSelectedDate(date)}
                 className={`px-4 py-2 rounded-full text-sm font-medium border ${selectedDate === date
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-100'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-100'
                   }`}
               >
                 {isToday ? 'Today' : date}
@@ -138,15 +127,16 @@ useEffect(() => {
           })}
         </div>
 
-        {/* Picks Table */}
+        {/* Picks Display */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-xl font-semibold text-gray-900">Trading Signals for {selectedDate}</h2>
             <p className="text-gray-600 text-sm mt-1">Click on any pick for detailed analysis</p>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="min-w-full">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-4 text-left text-lg font-medium text-gray-700 uppercase">Stock</th>
@@ -179,7 +169,7 @@ useEffect(() => {
                     >
                       <td className="px-6 py-4 text-md font-semibold text-gray-900">{pick.stockSymbol}</td>
                       <td className="px-6 py-4 text-md text-blue-600">₹{pick.price}</td>
-                      <td className="px-6 py-4 text-md text-green-700 font-medium">₹{pick.buyAbove}</td>
+                      <td className="px-6 py-4 text- text-green-700 font-medium">₹{pick.buyAbove}</td>
                       <td className="px-6 py-4 text-md text-green-700 font-medium">₹{pick.buyTarget}</td>
                       <td className="px-6 py-4 text-md text-red-600 font-medium">₹{pick.sellBelow}</td>
                       <td className="px-6 py-4 text-md text-red-600 font-medium">₹{pick.sellTarget}</td>
@@ -195,10 +185,64 @@ useEffect(() => {
               </tbody>
             </table>
           </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden p-4">
+            {filteredPicks.length > 0 ? (
+              <div className="space-y-4">
+                {filteredPicks.map((pick, index) => (
+                  <motion.div
+                    key={pick._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 transition-shadow hover:shadow-md"
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="text-xl font-bold text-gray-900">{pick.stockSymbol}</h3>
+                      <span className="text-lg font-semibold text-blue-600">
+                        ₹{pick.price}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* Buy Section */}
+                      <div>
+                        <div className="flex items-center text-green-700 mb-1">
+                          <TrendingUp className="w-4 h-4 mr-2" />
+                          <span className="font-semibold">Buy</span>
+                        </div>
+                        <div className="ml-6 text-sm text-gray-600">
+                          <p>Above: <span className="font-medium text-gray-900">₹{pick.buyAbove}</span></p>
+                          <p>Target: <span className="font-medium text-gray-900">₹{pick.buyTarget}</span></p>
+                        </div>
+                      </div>
+
+                      {/* Sell Section */}
+                      <div>
+                        <div className="flex items-center text-red-600 mb-1">
+                          <TrendingDown className="w-4 h-4 mr-2" />
+                          <span className="font-semibold">Sell</span>
+                        </div>
+                        <div className="ml-6 text-sm text-gray-600">
+                          <p>Below: <span className="font-medium text-gray-900">₹{pick.sellBelow}</span></p>
+                          <p>Target: <span className="font-medium text-gray-900">₹{pick.sellTarget}</span></p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-gray-500 py-6">
+                No picks available for this date.
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Disclaimer */}
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-yellow-100 border-t border-yellow-300 text-gray-800 text-sm p-4 shadow-md">
+        <div className="mt-8 bg-yellow-100 border-t border-yellow-300 text-gray-800 text-sm p-4 shadow-md rounded-md">
           <div className="max-w-7xl mx-auto">
             <p>
               <strong>Disclaimer:</strong> The "Buy Above" or "Sell Below" levels are provided for educational purposes only.
@@ -208,18 +252,6 @@ useEffect(() => {
             </p>
           </div>
         </div>
-        {/* Premium CTA */}
-        {/* <div className="mt-12 text-center">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white shadow-lg">
-            <h3 className="text-2xl font-bold mb-4">Upgrade for Daily Accurate Picks</h3>
-            <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-              Get real-time alerts, detailed chart analysis, and exclusive trading setups. Start your 7-day free trial now!
-            </p>
-            <button className="bg-white text-blue-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-              Get Premium Access <ArrowRight className="w-5 h-5 ml-2 inline" />
-            </button>
-          </div>
-        </div> */}
       </div>
     </div>
   );

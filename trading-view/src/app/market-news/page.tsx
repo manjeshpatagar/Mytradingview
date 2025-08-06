@@ -177,7 +177,7 @@ export default function MarketNewsPage() {
       </div>
 
       {/* Fixed bottom disclaimer */}
-      <div className="fixed bottom-0 inset-x-0 bg-yellow-50 border-t border-yellow-300 shadow-inner z-40">
+     <div className="mt-8 bg-yellow-100 border-t border-yellow-300 text-gray-800 text-sm p-4 shadow-md rounded-md">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-start space-x-3">
           <div className="flex-shrink-0">
             <Globe className="h-5 w-5 text-yellow-500 mt-1" />

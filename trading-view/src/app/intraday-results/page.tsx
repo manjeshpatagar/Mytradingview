@@ -142,7 +142,7 @@ export default function IntradayResults() {
           </div>
         </div>
 
-        <div className="fixed bottom-0 left-0 w-full z-50 bg-yellow-100 border-t-4 border-yellow-500 text-yellow-800 px-6 py-4 shadow-md">
+        <div className="mt-8 bg-yellow-100 border-t border-yellow-300 text-gray-800 text-sm p-4 shadow-md rounded-md">
           <div className="max-w-6xl mx-auto flex">
             <Info className="w-5 h-5 mr-3 mt-1 text-yellow-500" />
             <div className="text-sm">

@@ -213,7 +213,7 @@ export default function StockNews() {
       </div>
 
       {/* Disclaimer */}
-      <div className="fixed bottom-0 w-full z-40 bg-yellow-50 border-t border-yellow-300">
+      <div className="mt-8 bg-yellow-100 border-t border-yellow-300 text-gray-800 text-sm p-4 shadow-md rounded-md">
         <div className="max-w-3xl mx-auto p-4">
           <div className="flex items-start gap-3">
             <Newspaper className="h-5 w-5 text-yellow-500 mt-1" />
