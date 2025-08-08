@@ -105,8 +105,8 @@ export default function Home() {
   const navigationItems = [
     { name: 'Intraday Picks', href: '/intraday-picks', icon: Target },
     { name: 'Stock Events', href: '/results', icon: Calendar },
-    { name: 'Stock News', href: '/stock-news', icon: Newspaper },
-    { name: 'Market News', href: '/market-news', icon: Globe },
+    // { name: 'Stock News', href: '/stock-news', icon: Newspaper },
+    // { name: 'Market News', href: '/market-news', icon: Globe },
     { name: 'Trade Plan', href: '/trade-plan', icon: BookOpen },
     { name: 'Today Performance', href: '/intraday-results', icon: Activity }
   ];

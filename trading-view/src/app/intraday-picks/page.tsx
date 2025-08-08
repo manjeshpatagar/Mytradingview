@@ -169,9 +169,17 @@ export default function IntradayPicks() {
                     >
                       <td className="px-6 py-4 text-md font-semibold text-gray-900">{pick.stockSymbol}</td>
                       <td className="px-6 py-4 text-md text-blue-600">₹{pick.price}</td>
-                      <td className="px-6 py-4 text- text-green-700 font-medium">₹{pick.buyAbove}</td>
+                      <td className="px-6 py-4">
+                        <span className="text-black bg-green-400 font-medium px-2 py-1 rounded">
+                          ₹{pick.buyAbove}
+                        </span>
+                      </td>
                       <td className="px-6 py-4 text-md text-green-700 font-medium">₹{pick.buyTarget}</td>
-                      <td className="px-6 py-4 text-md text-red-600 font-medium">₹{pick.sellBelow}</td>
+                      <td className="px-6 py-4">
+                        <span className="text-black bg-red-400 font-medium px-2 py-1 rounded">
+                          ₹{pick.sellBelow}
+                        </span>
+                      </td>
                       <td className="px-6 py-4 text-md text-red-600 font-medium">₹{pick.sellTarget}</td>
                     </motion.tr>
                   ))
@@ -212,20 +220,35 @@ export default function IntradayPicks() {
                           <TrendingUp className="w-4 h-4 mr-2" />
                           <span className="font-semibold">Buy</span>
                         </div>
-                        <div className="ml-6 text-sm text-gray-600">
-                          <p>Above: <span className="font-medium text-gray-900">₹{pick.buyAbove}</span></p>
-                          <p>Target: <span className="font-medium text-gray-900">₹{pick.buyTarget}</span></p>
+                        <div className="ml-6 text-sm text-gray-600 space-y-3">
+                          <p className="flex items-center space-x-2">
+                            <span>Above:</span>
+                            <span className="font-large text-black bg-green-400 px-2 py-1 rounded">
+                              ₹{pick.buyAbove}
+                            </span>
+                          </p>
+                          <p className="flex items-center space-x-5">
+                            <span>Target:</span>
+                            <span className="font-medium text-gray-900">
+                              ₹{pick.buyTarget}
+                            </span>
+                          </p>
                         </div>
                       </div>
 
                       {/* Sell Section */}
                       <div>
-                        <div className="flex items-center text-red-600 mb-1">
+                        <div className="flex items-center text-red-600 mb-1 ">
                           <TrendingDown className="w-4 h-4 mr-2" />
                           <span className="font-semibold">Sell</span>
                         </div>
-                        <div className="ml-6 text-sm text-gray-600">
-                          <p>Below: <span className="font-medium text-gray-900">₹{pick.sellBelow}</span></p>
+                        <div className="ml-6 text-sm text-gray-600 space-y-3">
+                          <p>
+                            Below:{" "}
+                            <span className="font-medium text-black bg-red-400 px-2 py-1 rounded">
+                              ₹{pick.sellBelow}
+                            </span>
+                          </p>
                           <p>Target: <span className="font-medium text-gray-900">₹{pick.sellTarget}</span></p>
                         </div>
                       </div>
@@ -240,6 +263,39 @@ export default function IntradayPicks() {
             )}
           </div>
         </div>
+
+        {/* Quick Guide / Legend */}
+        {/* Quick Guide / Legend */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 my-4">
+          <h3 className="text-md font-semibold text-blue-800 mb-2">📘 Quick Guide</h3>
+          <ul className="list-disc list-inside text-sm text-gray-700 space-y-2">
+            <li>
+              <strong>Buy Above:</strong> If the stock trades above this price, it may enter a bullish momentum. Consider entering a <span className="text-green-700 font-medium">Buy</span> position.
+            </li>
+            <li>
+              <strong>Buy Target:</strong> The expected upward price target after a successful Buy Above trigger.
+              <br />
+              <span className="text-gray-600 text-xs">
+                🔹 Don't wait for full target always — book profits gradually when the price moves up 2-3%. If the stock moves in your favor quickly, consider trailing your stop loss. Avoid holding for full targets if market conditions change.
+              </span>
+            </li>
+            <li>
+              <strong>Sell Below:</strong> If the stock drops below this price, it may indicate bearish momentum. Consider entering a <span className="text-red-600 font-medium">Sell</span> position.
+            </li>
+            <li>
+              <strong>Sell Target:</strong> The expected downward price target after a successful Sell Below trigger.
+              <br />
+              <span className="text-gray-600 text-xs">
+                🔻 Just like Buy trades, aim to lock in 2-3% profit if reached early. Don’t chase entire targets blindly — secure gains and manage risk dynamically.
+              </span>
+            </li>
+            <li>
+              Always use a proper <span className="font-medium">Stop Loss</span>. Trade with discipline — targets are indicative, and no level guarantees success.
+            </li>
+          </ul>
+        </div>
+
+
 
         {/* Disclaimer */}
         <div className="mt-8 bg-yellow-100 border-t border-yellow-300 text-gray-800 text-sm p-4 shadow-md rounded-md">

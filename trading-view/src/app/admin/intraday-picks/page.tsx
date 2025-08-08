@@ -282,7 +282,7 @@ export default function AdminIntradayPicks() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Sell Below</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">SellDDDDD Below</label>
                     <input
                       type="number"
                       value={editingPick.sellBelow}
