@@ -6,11 +6,11 @@ import {
   updateIntradayResult,
   deleteIntradayResult,
 } from "../controllers/intradayResults.controller.js";
-import { protect } from "../middleware/auth.middleware.js";
+// import { protect } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.use(protect);
+// router.use(protect);
 
 router.route("/").post(createIntradayResult).get(getAllIntradayResults);
 
