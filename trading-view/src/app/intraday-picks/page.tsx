@@ -213,7 +213,7 @@ export default function IntradayPicks() {
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-[15px]">
                       {/* Buy Section */}
                       <div>
                         <div className="flex items-center text-green-700 mb-1">
