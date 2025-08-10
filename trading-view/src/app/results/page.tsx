@@ -2,11 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, TrendingUp, DollarSign, Clock, AlertTriangle } from 'lucide-react';
+import { Calendar, AlertTriangle } from 'lucide-react';
 import { getAllResults } from "../../services/resultsService";
 
-// Define a type for the event data from the API.
-// This type is a slight variation of what you had, aligning with a common API response structure.
 type Event = {
   _id?: string;
   type: 'earnings' | 'dividend' | 'event';
@@ -27,7 +25,6 @@ export default function Results() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Helper function to format a date string to a more readable format
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -37,7 +34,6 @@ export default function Results() {
     });
   };
 
-  // Helper function to get the color for importance based on the value
   const getImportanceColor = (importance: string) => {
     switch (importance) {
       case 'high': return 'bg-red-100 text-red-800';
@@ -47,7 +43,6 @@ export default function Results() {
     }
   };
 
-  // Helper function to get the color for the event type
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'earnings': return 'bg-blue-100 text-blue-800';
@@ -67,7 +62,7 @@ export default function Results() {
         }
         if (Array.isArray(resultsData)) {
           const today = new Date();
-          const todayStr = today.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+          const todayStr = today.toISOString().split('T')[0];
 
           const todaysEvents = resultsData.filter((event: Event) => {
             const eventDateStr = new Date(event.date).toISOString().split('T')[0];
@@ -75,6 +70,7 @@ export default function Results() {
           });
 
           setEvents(todaysEvents);
+          setError(null);
         } else {
           setError("Invalid data format from server.");
         }
@@ -86,50 +82,30 @@ export default function Results() {
       }
     };
 
-    fetchResults(); // Initial fetch
-
-    const interval = setInterval(fetchResults, 5000); // Fetch every 5 seconds
-
-    return () => clearInterval(interval); // Clean up on unmount
+    fetchResults();
+    const interval = setInterval(fetchResults, 5000);
+    return () => clearInterval(interval);
   }, []);
-
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <p className="text-gray-600">Loading corporate events...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <p className="text-red-600 font-medium">{error}</p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-4"> {/* Reduced py-8 to py-4 */}
-          <div className="flex items-center space-x-3 mb-2"> {/* mb-4 to mb-2 */}
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center space-x-3 mb-2">
             <div className="w-9 h-9 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-white" /> {/* Slightly smaller icon */}
+              <Calendar className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Results & Events</h1> {/* text-3xl → text-2xl */}
-              <p className="text-sm text-gray-600">Today's earnings, dividends, and corporate events</p> {/* Smaller text */}
+              <h1 className="text-2xl font-bold text-gray-900">Results & Events</h1>
+              <p className="text-sm text-gray-600">Today's earnings, dividends, and corporate events</p>
             </div>
           </div>
         </div>
       </div>
 
-
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Events Table */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-xl font-semibold text-gray-900">Today's Events</h2>
@@ -148,7 +124,19 @@ export default function Results() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {events.length > 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan={5} className="text-center text-gray-500 py-6">
+                      Loading corporate events...
+                    </td>
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan={5} className="text-center text-red-600 py-6">
+                      {error}
+                    </td>
+                  </tr>
+                ) : events.length > 0 ? (
                   events.map((event, index) => (
                     <motion.tr
                       key={event._id || `${event.symbol}-${event.date}`}
@@ -197,7 +185,7 @@ export default function Results() {
                 ) : (
                   <tr>
                     <td colSpan={5} className="text-center text-gray-500 py-6">
-                      No events available.
+                      No events available for this date.
                     </td>
                   </tr>
                 )}
@@ -225,7 +213,6 @@ export default function Results() {
             </div>
           </div>
         </div>
-
 
       </div>
     </div>

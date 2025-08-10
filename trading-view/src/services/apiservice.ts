@@ -1,8 +1,10 @@
 import axios from "axios";
 
 const ApiService = axios.create({
+  // baseURL:"https://091ee4ec5617.ngrok-free.app/api",
+  //  baseURL: "http://192.168.6.239:5060/api",
   baseURL: "https://api.trade-zone.cloudbeaststudio.com/api",
-  headers: {
+  headers: {  
     "Content-Type": "application/json",
   },
 });
